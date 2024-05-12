@@ -37,5 +37,10 @@ public class FileUtil {
         }
     }
     public static void rewriteJson() {}
-    public static void rewriteYaml() {}
+    public static JSONObject getData(String fileName) {
+        File f = new File(fold + "/data" + fileName)
+        try (FileReader fr = new FileReader(f)) {
+            return JSONObject.parseObject()//todo
+        }
+    }
 }

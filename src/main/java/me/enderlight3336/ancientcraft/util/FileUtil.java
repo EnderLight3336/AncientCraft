@@ -43,4 +43,7 @@ public class FileUtil {
             return JSONObject.parseObject()//todo
         }
     }
+    public static JSON getJSON(String fileName) {
+        return JSON.parseObject(new FileReader(new Filw(fold + "/" + fileName)));
+    }
 }

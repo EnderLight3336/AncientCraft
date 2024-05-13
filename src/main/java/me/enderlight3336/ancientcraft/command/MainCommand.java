@@ -10,7 +10,13 @@ import java.util.List;
 public class MainCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String[] strings) {
-        return false;
+        if (strings.length > 0) {
+            switch (strings[0]) {
+                case "version" -> {}
+                case "updateitem" -> {}
+            }
+        } else {}
+        return true;
     }
 
     @Override

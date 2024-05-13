@@ -19,6 +19,8 @@ public final class AncientCraft extends JavaPlugin {
             throw new RuntimeException(e);
         }
 
+        ConfigInstance.init();
+        L18N.init();
         Util.init();
         ItemNBTUtil.init();
     }

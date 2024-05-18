@@ -4,4 +4,4 @@ public final class CommandUtil {
     public static boolean isPlayer(CommandSender sender) {
         return CommandSender instanceof Player;
     }
-}
+}v

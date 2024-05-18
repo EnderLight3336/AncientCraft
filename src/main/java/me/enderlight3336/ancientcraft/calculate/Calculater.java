@@ -1,6 +1,6 @@
 package me.enderlight3336.ancientcraft.calculate;
 
-public abstract class Calculater <T extend Number> {
+public class Calculater <T extends Number> {
     final CalcType type;
     final T i;
     public Calculater(CalcType type, T i) {

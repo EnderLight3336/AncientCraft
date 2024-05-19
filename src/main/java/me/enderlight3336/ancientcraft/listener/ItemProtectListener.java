@@ -2,11 +2,11 @@ package me.enderlight3336.ancientcraft.listener;
 
 import org.bukkit.event.Listener;
 
-public class ItemProtectListener implements Listener {/**
+public class ItemProtectListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPrepareAnvil(PrepareAnvilEvent event) {
         for(ItemStack item : event.getInventory().getContents()) {
-            if(item instanceof ItemInstance) {
+            if(Util.isACItem(item)) {
                 event.setResult(null);
                 return;
             }
@@ -14,17 +14,17 @@ public class ItemProtectListener implements Listener {/**
     }
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPrepareItemEnchant(PrepareItemEnchantEvent event) {
-        if(event.getItem() instanceof ItemInstance)
+        if(Util.isACItem(event.getItem()))
             event.setCancelled(true);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPrepareItemCraft(PrepareItemCraftEvent event) {
         for(ItemStack item : event.getInventory().getMatrix()) {
-            if(item instanceof ItemInstance) {
+            if(Util.isACItem(item)) {
                 event.getInventory().setResult(null);
                 return;
             }
         }
-    }*/
+    }
 }

@@ -1,21 +1,19 @@
 package me.enderlight3336.ancientcraft.util;
 
+import com.alibaba.fastjson2.JSONObject;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
 public final class L18N {
-    private static final Map<String, String> lang = new HashMap<>();
+    private static JSONObject lang;
     public static void init() {
-        String s =  ;
-        lang.putAll(FileUtil.getJSON(s + ".json"));
+        // lang = FileUtil.getJSON(ConfigInstance.getLang() + ".json");
     }
     @NotNull
     public static String get(@NotNull String s) {
-        return lang.get(s) == null ? s : lang.get(s);
-    }
-    public enum LangType {
-
+        return lang.getString(s) == null ? s : lang.getString(s);
     }
 }

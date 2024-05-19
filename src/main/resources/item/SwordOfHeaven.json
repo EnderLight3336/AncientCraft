@@ -1,0 +1,24 @@
+{
+    "id" : "SWORDOFHEAVEN",
+    "name" : "倚天剑",
+    "material" : "IRON_SWORD",
+    "lore" : [
+        "test1"
+    ],
+    "star" : [
+        {
+            "items" : [
+                {
+                    "material" : "DIAMOND",
+                    "amount" : 1
+                }
+            ],
+            "attributes" : [
+                {
+                    "name" : "GENERIC_ATTACK_DAMAGE",
+                    "amount" : 2.5
+                }
+            ]
+        }
+    ]
+}

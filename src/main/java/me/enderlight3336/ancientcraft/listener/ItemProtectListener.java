@@ -2,7 +2,7 @@ package me.enderlight3336.ancientcraft.listener;
 
 import org.bukkit.event.Listener;
 
-public class ItemProtectListener implements Listener {
+public final class ItemProtectListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPrepareAnvil(PrepareAnvilEvent event) {
         for(ItemStack item : event.getInventory().getContents()) {
@@ -27,4 +27,8 @@ public class ItemProtectListener implements Listener {
             }
         }
     }
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    public void onPrepareSmithing(PrepareSmithingEvent event) {}
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    public void onPrepareGrindstone(PrepareGrindstoneEvent event) {}
 }

@@ -18,7 +18,7 @@ public final class ItemProtectListener implements Listener {
             event.setCancelled(true);
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPrepareItemCraft(PrepareItemCraftEvent event) {
         for(ItemStack item : event.getInventory().getMatrix()) {
             if(Util.isACItem(item)) {
@@ -28,7 +28,9 @@ public final class ItemProtectListener implements Listener {
         }
     }
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    public void onPrepareSmithing(PrepareSmithingEvent event) {}
+    public void onPrepareSmithing(PrepareSmithingEvent event) {
+        event.getInventory()//todo
+    }
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPrepareGrindstone(PrepareGrindstoneEvent event) {}
 }

@@ -53,6 +53,13 @@ public final class AncientCraft extends JavaPlugin {
                         ((Player) sender).getInventory().addItem(Util.createItem(Items.valueOf(args[1]).getInstance()));
                     }
                 }
+                case "dummy" -> {
+                    if(!CommandUtil.isPlayer(sender)) {
+                        return true;
+                    }
+                    ((Player) sender).getWorld().spawnEntity(((Player) sender).getLocation(), EntityType)
+                }
+                default -> {}
             }
         } else {}
         return true;

@@ -68,4 +68,7 @@ public final class Util {
     public static void setInternalId(@NotNull ItemMeta im) {
         im.getPersistentDataContainer().set(dataKey, PersistentDataType.INTEGER, refs.size());
     }
+    public static boolean isACItem(ItemStack item) {
+        return item.getItemMeta().getPersistentDataContainer().has(idKey);
+    }
 }

@@ -1,7 +1,5 @@
 package me.enderlight3336.ancientcraft;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONReader;
 import me.enderlight3336.ancientcraft.item.ItemManager;
 import me.enderlight3336.ancientcraft.listener.DamageListener;
 import me.enderlight3336.ancientcraft.listener.DummyListener;
@@ -28,7 +26,6 @@ public final class AncientCraft extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        JSON.config(JSONReader.Feature.Base64StringAsByteArray);
         version = YamlConfiguration.loadConfiguration(new InputStreamReader(instance.getResource("plugin.yml"))).getString("version");
         try {
             FileUtil.init();

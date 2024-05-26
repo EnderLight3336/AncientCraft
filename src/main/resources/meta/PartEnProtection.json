@@ -1,0 +1,8 @@
+{
+    "id" : "PARTPROTECTION",
+    "name" : "保护模块",
+    "material" : "",
+    "lore" : [],
+    "enchantment" : "PROTECTION",
+    "value" : [5, 6, 7, 8, 9, 10]
+}

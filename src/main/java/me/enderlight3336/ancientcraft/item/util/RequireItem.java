@@ -19,13 +19,14 @@ public class RequireItem {
     public int getAmount() {
         return amount;
     }
+
     public int accept(ItemStack item, int a) {
-        if(item.getType() == material) {
-            if(tags.size() > 0) {
-                for(String s : tags) {
+        if (item.getType() == material) {
+            if (tags.size() > 0) {
+                for (String s : tags) {
                     //todo
                 }
-                if(item.getAmount() >= a) {
+                if (item.getAmount() >= a) {
                     item.setAmount(item.getAmount() - a);
                     return 0;
                 } else {

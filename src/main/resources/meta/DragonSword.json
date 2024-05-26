@@ -1,0 +1,24 @@
+{
+    "id" : "DRAGONSWORD",
+    "name" : "屠龙宝刀",
+    "material" : "GOLDEN_SWORD",
+    "lore" : [
+        "+200%对龙伤害"
+    ],
+    "star" : [
+        {
+            "items" : [
+                {
+                    "material" : "DIAMOND",
+                    "amount" : 1
+                }
+            ],
+            "attributes" : [
+                {
+                    "name" : "GENERIC_ATTACK_DAMAGE",
+                    "amount" : 2.5
+                }
+            ]
+        }
+    ]
+}

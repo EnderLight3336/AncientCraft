@@ -1,0 +1,8 @@
+{
+    "id" : "PARTSHARPNESS",
+    "name" : "锋利模块",
+    "material" : "",
+    "lore" : [],
+    "enchantment" : "SHARPNESS",
+    "value" : [5, 6, 7, 8, 9, 10]
+}

@@ -6,13 +6,14 @@ import java.io.FileNotFoundException;
 
 public final class ConfigInstance {
     private static String lang = null;
-    private static int maxStar = 0;
-    private static int maxLevel = 10;
+    private static String[] starInfo;
+    private static Integer[] levelInfo;
+
     public static void init() throws FileNotFoundException {
         JSONObject json = FileUtil.getJSON("config.json");
         lang = json.getString("lang");
-        maxStar = json.getInteger("maxstar");
-        maxLevel = json.getInteger("maxlevel");
+        starInfo = json.getJSONArray("starInfo").toArray(String.class);
+        levelInfo = json.getJSONArray("level").toArray(Integer.class);
     }
 
     public static String getLang() {
@@ -20,10 +21,18 @@ public final class ConfigInstance {
     }
 
     public static int getMaxStar() {
-        return maxStar;
+        return starInfo.length;
     }
 
     public static int getMaxLevel() {
-        return maxLevel;
+        return levelInfo.length;
+    }
+
+    public static String getStarInfo(int currentStar) {
+        return starInfo[currentStar - 1];
+    }
+
+    public static int getNeedExp(int currentLevel) {
+        return levelInfo[currentLevel];
     }
 }

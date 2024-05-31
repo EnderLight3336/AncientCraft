@@ -22,6 +22,9 @@ public final class MultipleBlockManager {
     }
 
     public static void accept(@NotNull PlayerInteractEvent event) {
+        if(!event.isCancelled()) {
+            if(event.getAction() == RIGHT_CLICK_BLOCK)
+        }
         List<MultipleBlock> m = mb.get((event.getClickedBlock()).getType());
         if (m != null) {
             event.setCancelled(true);

@@ -4,8 +4,8 @@ import org.bukkit.Material;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class MultipleCraftTable extends MultipleBlock {
-    public MultipleCraftTable(Material material) {
-        super(material);
+    public MultipleCraftTable() {
+        super(Material.);
     }
 
     @Override

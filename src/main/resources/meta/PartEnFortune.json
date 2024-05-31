@@ -1,0 +1,8 @@
+{
+    "id" : "PARTFORTUNE",
+    "name" : "时运模块",
+    "material" : "LAPIS_LAZULI",
+    "lore" : ["蕴含着幸运女神的祝福"],
+    "enchantment" : "FORTUNE",
+    "value" : [1, 2, 3, 4, 5, 6]
+}

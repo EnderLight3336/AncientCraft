@@ -1,0 +1,8 @@
+{
+    "id" : "PARTJUMP",
+    "name" : "跃动模块",
+    "material" : "SLIME_BALL",
+    "lore" : ["向盔甲注入了史莱姆的能力，以增加你的跳跃高度"],
+    "attribute" : "GENERIC_JUMP_STRENGTH",
+    "value" : [1, 1.5, 3.0, 4.0, 5.0]
+}

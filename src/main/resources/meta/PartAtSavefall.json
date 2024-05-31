@@ -1,0 +1,8 @@
+{
+    "id" : "PARTSAVEFALL",
+    "name" : "羽降模块",
+    "material" : "FEATHER",
+    "lore" : ["将幻翼的力量注入盔甲，以增加你的无伤摔落格数"],
+    "attribute" : "GENERIC_SAFE_FALL_DISTANCE",
+    "value" : [0.5, 1.5, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
+}

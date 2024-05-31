@@ -65,9 +65,12 @@ public class LevelData implements ItemData {
     }
 
     /**
-     * @return the Part's level, -1 means not exist
+     * @return the Part's level, 0 means not exist
      */
-    public int containsPart(String id) {
-        return parts.getOrDefault(id, -1);
+    public int getPartLevel(String id) {
+        return parts.getOrDefault(id, 0);
     }
+
+    @Override
+    public String toJsonString() {}
 }

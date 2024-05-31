@@ -14,6 +14,8 @@ public abstract class BasePart extends ItemInstance {
      * must be call after handling !!!!
      */
     public <T extends LevelData> void accept(T data) {
-
+        data.addPart(getId());
     }
+
+    public abstract boolean canApply(int current);
 }

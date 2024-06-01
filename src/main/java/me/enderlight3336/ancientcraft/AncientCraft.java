@@ -4,6 +4,7 @@ import me.enderlight3336.ancientcraft.item.ItemManager;
 import me.enderlight3336.ancientcraft.listener.DamageListener;
 import me.enderlight3336.ancientcraft.listener.DummyListener;
 import me.enderlight3336.ancientcraft.listener.ItemProtectListener;
+import me.enderlight3336.ancientcraft.multiple.MultipleBlockManager;
 import me.enderlight3336.ancientcraft.util.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
@@ -35,6 +36,7 @@ public final class AncientCraft extends JavaPlugin {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        MultipleBlockManager.init();
 
         getServer().getPluginManager().registerEvents(new DamageListener(), instance);
         getServer().getPluginManager().registerEvents(new DummyListener(), instance);
@@ -62,7 +64,7 @@ public final class AncientCraft extends JavaPlugin {
                             break;
                         }
                         String str = args[1].toUpperCase();
-                        if (ItemManager.isAvailableId(str)) {
+                        if (ItemManager.checkId(str)) {
                             int amount = 1;
                             if (args.length > 2) {
                                 try {
@@ -89,7 +91,7 @@ public final class AncientCraft extends JavaPlugin {
                             RayTraceResult result = ((Player) sender).getWorld().rayTraceEntities(((Player) sender).getLocation(), ((Player) sender).getLocation().getDirection(), 5);
                             Entity e;
                             if (result != null && (e = result.getHitEntity()) != null) {
-                                if (KeyManager.hasId(e)) {
+                                if (ItemUtil.hasId(e)) {
                                     e.remove();
                                 } else {
                                     sender.sendMessage("这不是Dummy");
@@ -111,14 +113,14 @@ public final class AncientCraft extends JavaPlugin {
                     ((LivingEntity) ((Player) sender).getWorld().spawn(((Player) sender).getLocation(), c, false, entity -> {
                         LivingEntity e = (LivingEntity) entity;
                         e.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(5000);
-                        KeyManager.setId(entity, "dummy");
+                        ItemUtil.setId(entity, "dummy");
                     })).setAI(false);
                 }
                 case "id" -> {
                     if (!CommandUtil.requirePlayer(sender)) {
                         break;
                     }
-                    String id = KeyManager.getId(((Player) sender).getInventory().getItemInMainHand().getItemMeta());
+                    String id = ItemUtil.getId(((Player) sender).getInventory().getItemInMainHand().getItemMeta());
                     sender.sendMessage(id == null ? "你手持的不是AncientCraft的物品 !" : "id: " + id);
                 }
                 default -> CommandUtil.sendHelp(sender);

@@ -8,11 +8,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class FileUtil {
-    static final File fold;
-
-    static {
-        fold = AncientCraft.getInstance().getDataFolder();
-    }
+    static final File fold = AncientCraft.getInstance().getDataFolder();
 
     public static void init() {
         try {
@@ -49,10 +45,14 @@ public class FileUtil {
 
     public static JSONObject getJSONByFile(File f) {
         try (FileInputStream input = new FileInputStream(f)) {
-            return JSON.parseObject(new String(input.readAllBytes(), StandardCharsets.UTF_8));
+            return JSON.parseObject(input, StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static File getDataFolder(String id) {
+        return new File(fold, "data/" + id);
     }
 
     /**

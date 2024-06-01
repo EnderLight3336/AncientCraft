@@ -3,9 +3,10 @@ package me.enderlight3336.ancientcraft.item.instance;
 import com.alibaba.fastjson2.JSONObject;
 import me.enderlight3336.ancientcraft.item.ItemManager;
 import me.enderlight3336.ancientcraft.item.data.ItemData;
-import me.enderlight3336.ancientcraft.util.KeyManager;
+import me.enderlight3336.ancientcraft.util.ItemUtil;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -15,11 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemInstance {
-    private final String id;
-    private final String name;
-    private final Material material;
-    private final List<String> lore = new ArrayList<>();
-    private final ItemStack originItem;
+    protected final String id;
+    protected final String name;
+    protected final Material material;
+    protected final List<String> lore = new ArrayList<>();
+    protected final ItemStack originItem;
 
     public ItemInstance(String id, Material material, String name, List<String> lore) {
         this.id = id;
@@ -45,16 +46,16 @@ public class ItemInstance {
         originItem = new ItemStack(this.material);
         ItemMeta im = originItem.getItemMeta();
         im.setDisplayName(this.name);
-        KeyManager.setId(im, id);
+        ItemUtil.setId(im, id);
         im.setLore(this.lore);
 
-        if (json.containsKey("attributes")) {
+        if (json.containsKey("baseAttributes")) {
             JSONObject attributes = json.getJSONObject("attributes");
-            attributes.forEach((str, o) -> {
-
-            });
+            attributes.forEach((str, o) -> im.addAttributeModifier(Attribute.valueOf(str),
+                    new AttributeModifier("ancientcraft", (double) o, AttributeModifier.Operation.ADD_NUMBER)));
         }
-        if (im instanceof Damageable) {
+
+        if (im instanceof Damageable && json.containsKey("durability")) {
             ((Damageable) im).setMaxDamage(json.getInteger("durability"));
         }
 
@@ -63,24 +64,15 @@ public class ItemInstance {
         ItemManager.regItem(this);
     }
 
-    @Nullable
-    public ItemData genData(ItemStack item) {
-        return null;
-    }
 
     /**
      * called when prepare create {@link ItemStack}
      *
      * @return a copy of {@link ItemInstance#originItem}
-     * @see ItemManager#createItem(String, Player)
+     * @see #createItem()
      */
-    public ItemStack createItem(Player player) {
-        ItemStack item = originItem.clone();
-        ItemData newData = genData(item);
-        if (newData != null) {
-            KeyManager.setCrafter(item, player.getUniqueId());
-        }
-        return item;
+    public ItemStack createItem() {
+        return originItem.clone();
     }
 
     /**

@@ -1,20 +1,25 @@
 package me.enderlight3336.ancientcraft.item.data;
 
+import com.alibaba.fastjson2.JSONObject;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class LevelData implements ItemData {
+public class CommonData implements ItemData {
     private int exp;
     private int level;
-    private final ItemStack item;
     private final Map<String, Integer> parts = new HashMap<>();
 
-    public LevelData(ItemStack item) {
+    public CommonData() {
         exp = 0;
         level = 0;
-        this.item = item;
+    }
+    public CommonData(@NotNull JSONObject json) {
+        exp = json.getIntValue("exp");
+        level = json.getIntValue("level");
+        json.getJSONObject("parts").forEach((s, o) -> parts.put(s, (Integer) o));
     }
 
     public void setExp(int i) {
@@ -48,11 +53,6 @@ public class LevelData implements ItemData {
         return level;
     }
 
-    @Override
-    public ItemStack getItemStack() {
-        return item;
-    }
-
     public void addPart(String id) {
         if (parts.containsKey(id))
             parts.replace(id, parts.get(id) + 1);
@@ -72,5 +72,9 @@ public class LevelData implements ItemData {
     }
 
     @Override
-    public String toJsonString() {}
+    public String toJsonString() {
+        StringBuilder sb = new StringBuilder("{\"exp\":" + exp + ",\"level\":" + level + "\"parts\":{");
+        parts.forEach((s, integer) -> sb.append("\"").append(s).append("\":").append(integer));
+        return sb.append("}}").toString();
+    }
 }

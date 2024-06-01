@@ -1,8 +1,7 @@
 package me.enderlight3336.ancientcraft.item.instance.sword;
 
 import com.alibaba.fastjson2.JSONObject;
-import me.enderlight3336.ancientcraft.item.data.AdvData;
-import me.enderlight3336.ancientcraft.item.data.ItemData;
+import me.enderlight3336.ancientcraft.item.data.CommonData;
 import me.enderlight3336.ancientcraft.item.instance.DataItem;
 import me.enderlight3336.ancientcraft.item.instance.Levelable;
 import me.enderlight3336.ancientcraft.item.instance.Starable;
@@ -12,7 +11,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class LongSword extends DataItem implements CustomDamageHandler, Starable, Levelable {
+public class LongSword extends DataItem<CommonData> implements CustomDamageHandler, Starable, Levelable {
     public LongSword(JSONObject json) {
         super(json);
 
@@ -20,8 +19,13 @@ public class LongSword extends DataItem implements CustomDamageHandler, Starable
     }
 
     @Override
-    public @NotNull ItemData genData(ItemStack item) {
-        return new AdvData(item);
+    public int genNewData(ItemStack item) {
+        return data.put(new CommonData());
+    }
+
+    @Override
+    public @NotNull CommonData readData(JSONObject json) {
+        return new CommonData(json);
     }
 
     @Override

@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class DataItem<T extends ItemData> extends ItemInstance {
+public abstract class DataItem<T extends ItemData> extends ItemInstance implements Datable <T> {
     protected final DataList<T> data;
     public DataItem(JSONObject json) {
         super(json);
@@ -17,9 +17,6 @@ public abstract class DataItem<T extends ItemData> extends ItemInstance {
         data = new DataList<>(FileUtil.getDataFolder(getId()), this::readData);
     }
 
-    public abstract int genNewData(ItemStack item);
-
-    public abstract @NotNull T readData(JSONObject json);
 
     /**
      * @throws RuntimeException don't support set amount

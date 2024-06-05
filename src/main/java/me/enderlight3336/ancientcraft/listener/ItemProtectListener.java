@@ -12,7 +12,7 @@ import org.bukkit.event.inventory.PrepareSmithingEvent;
 import org.bukkit.inventory.ItemStack;
 
 public final class ItemProtectListener implements Listener {
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPrepareAnvil(PrepareAnvilEvent event) {
         for (ItemStack item : event.getInventory().getContents()) {
             if (ItemManager.isACItem(item)) {
@@ -22,7 +22,7 @@ public final class ItemProtectListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPrepareItemEnchant(PrepareItemEnchantEvent event) {
         if (ItemManager.isACItem(event.getItem()))
             event.setCancelled(true);

@@ -6,11 +6,13 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public abstract class MultipleBlock {
     final Material core;
+
     public MultipleBlock(Material material) {
         this.core = material;
     }
 
     public abstract void execute(PlayerInteractEvent event);
+
     public abstract boolean check(Block clicked);
 
     public final Material getCore() {

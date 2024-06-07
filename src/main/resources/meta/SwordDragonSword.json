@@ -1,10 +1,15 @@
 {
-    "id" : "DRAGONSWORD",
+    "id" : "dragon_sword",
     "name" : "屠龙宝刀",
     "material" : "GOLDEN_SWORD",
     "lore" : [
         "+200%对龙伤害"
     ],
+    "baseAttributes" : {
+        "GENERIC_ATTACK_DAMAGE" : 6,
+        "GENERIC_ATTACK_SPEED" : 0.60
+    },
+    "baseEnchantments" : {},
     "star" : [
         {
             "items" : [

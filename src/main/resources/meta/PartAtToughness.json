@@ -1,8 +1,9 @@
 {
-    "id" : "PARTTOUGHNESS",
+    "id" : "part_toughness",
     "name" : "韧性模块",
     "material" : "WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE",
     "lore" : ["增加盔甲的韧性"],
     "attribute" : "GENERIC_ARMOR_TOUGHNESS",
-    "value" : [0.5, 1.5, 3.0, 5.0]
+    "value" : [0.20, 0.50, 0.90, 1.50],
+    "partName" : "韧性"
 }

@@ -1,9 +1,10 @@
 package me.enderlight3336.ancientcraft;
 
 import me.enderlight3336.ancientcraft.item.ItemManager;
-import me.enderlight3336.ancientcraft.listener.DamageListener;
 import me.enderlight3336.ancientcraft.listener.DummyListener;
+import me.enderlight3336.ancientcraft.listener.EntityListener;
 import me.enderlight3336.ancientcraft.listener.ItemProtectListener;
+import me.enderlight3336.ancientcraft.listener.PlayerListener;
 import me.enderlight3336.ancientcraft.multiple.MultipleBlockManager;
 import me.enderlight3336.ancientcraft.util.*;
 import org.bukkit.attribute.Attribute;
@@ -17,38 +18,64 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.RayTraceResult;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class AncientCraft extends JavaPlugin {
     private static AncientCraft instance;
     private static String version;
 
     @Override
-    public void onEnable() {
+    public void onLoad() {
+        super.onLoad();
+
         instance = this;
         version = YamlConfiguration.loadConfiguration(new InputStreamReader(instance.getResource("plugin.yml"))).getString("version");
-        try {
-            FileUtil.init();
-            ConfigInstance.init();
-            L18N.init();
-            ItemManager.init();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    }
+
+    @Override
+    public void onEnable() {
+        FileUtil.init();
+        ConfigInstance.init();
+        L18N.init();
+        ItemManager.init();
         MultipleBlockManager.init();
 
-        getServer().getPluginManager().registerEvents(new DamageListener(), instance);
         getServer().getPluginManager().registerEvents(new DummyListener(), instance);
+        getServer().getPluginManager().registerEvents(new EntityListener(), instance);
         getServer().getPluginManager().registerEvents(new ItemProtectListener(), instance);
+        getServer().getPluginManager().registerEvents(new PlayerListener(), instance);
 
-        getLogger().info("========AncientCraft========");
-        getLogger().info("  version: " + version);
+        new DataSaver().runTaskTimerAsynchronously(instance, 6000L, 6000L);
+        new LoreBuildService().runTaskTimerAsynchronously(instance, 10L, 10L);
+
+        getLogger().info("================AncientCraft================");
+        getLogger().info("       version: " + version);
+        getLogger().info("**************Load Successfully*************");
     }
 
     @Override
     public void onDisable() {
+        DataSaver.execute();
+        LoreBuildService.execute();
+
         instance = null;
+    }
+
+    @Nullable
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+        if (args.length == 0 || args.length == 1) {
+            return List.of("version", "give", "dummy", "id");
+        } else if (args.length == 2) {
+            if (args[0].equalsIgnoreCase("give")) {
+                return new ArrayList<>(ItemManager.getRegisteredItem().keySet());
+            }
+        }
+        return null;
     }
 
     @Override
@@ -63,7 +90,7 @@ public final class AncientCraft extends JavaPlugin {
                             sender.sendMessage("无效的物品id");
                             break;
                         }
-                        String str = args[1].toUpperCase();
+                        String str = args[1].toLowerCase();
                         if (ItemManager.checkId(str)) {
                             int amount = 1;
                             if (args.length > 2) {
@@ -74,7 +101,9 @@ public final class AncientCraft extends JavaPlugin {
                                     break;
                                 }
                             }
-                            ((Player) sender).getInventory().addItem(ItemManager.createItem(str, amount));
+                            ((Player) sender).getInventory().addItem(args.length > 2 ?
+                                    ItemManager.createItem(str, amount) :
+                                    ItemManager.createItem(str));
                             sender.sendMessage("成功获取 " + amount + " * " + str);
                         } else {
                             sender.sendMessage("无效的物品id");

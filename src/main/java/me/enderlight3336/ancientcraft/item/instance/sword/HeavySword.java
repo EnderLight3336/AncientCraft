@@ -6,12 +6,13 @@ import me.enderlight3336.ancientcraft.item.instance.DataItem;
 import me.enderlight3336.ancientcraft.item.instance.Levelable;
 import me.enderlight3336.ancientcraft.item.instance.Starable;
 import me.enderlight3336.ancientcraft.listener.acceptor.CustomDamageHandler;
+import me.enderlight3336.ancientcraft.util.DataSaver;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class HeavySword extends DataItem<CommonData> implements CustomDamageHandler, Starable, Levelable {
+public class HeavySword extends DataItem<CommonData> implements CustomDamageHandler, Starable, Levelable, ISword {
     public HeavySword(JSONObject json) {
         super(json);
 
@@ -19,8 +20,9 @@ public class HeavySword extends DataItem<CommonData> implements CustomDamageHand
     }
 
     @Override
-    public int genNewData(ItemStack item) {
-        return data.put(new CommonData());
+    public DataSaver.Entry genNewData(ItemStack item) {
+        CommonData data1 = new CommonData();
+        return new DataSaver.Entry(data.put(data1), data1);
     }
 
     @Override
@@ -29,11 +31,11 @@ public class HeavySword extends DataItem<CommonData> implements CustomDamageHand
     }
 
     @Override
-    public void accept(EntityDamageByEntityEvent event) {
+    public void execute(EntityDamageByEntityEvent event) {
         if (event.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK) {
             event.setDamage(event.getDamage() * 0.5);
         } else if (event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
-            event.setDamage(event.getDamage() * 2);
+            event.setDamage(event.getDamage() * 1.3);
         }
     }
 }

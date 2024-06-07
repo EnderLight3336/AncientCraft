@@ -1,10 +1,20 @@
 {
-    "id" : "SHORTSWORD",
-    "name" : "短剑",
+    "id" : "long_sword",
+    "name" : "长剑",
     "material" : "IRON_SWORD",
     "lore" : [
-        "test1"
+        "§q +30%横扫伤害",
+        "§q +2攻击距离",
+        "§q 5.5伤害",
+        "§q 少量移动速度提升",
+        "§q 大量攻速提升"
     ],
+    "baseAttributes" : {
+        "GENERIC_ATTACK_DAMAGE" : 5.50,
+        "GENERIC_ATTACK_SPEED" : 10.00,
+        "GENERIC_MOVEMENT_SPEED" : 0.10,
+        "PLAYER_ENTITY_INTERACTION_RANGE" : 5.0
+    },
     "star" : [
         {
             "items" : [

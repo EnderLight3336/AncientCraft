@@ -2,14 +2,12 @@ package me.enderlight3336.ancientcraft.util;
 
 import com.alibaba.fastjson2.JSONObject;
 
-import java.io.FileNotFoundException;
-
 public final class ConfigInstance {
     private static String lang = null;
     private static String[] starInfo;
     private static Integer[] levelInfo;
 
-    public static void init() throws FileNotFoundException {
+    public static void init() {
         JSONObject json = FileUtil.getJSON("config.json");
         lang = json.getString("lang");
         starInfo = json.getJSONArray("starInfo").toArray(String.class);

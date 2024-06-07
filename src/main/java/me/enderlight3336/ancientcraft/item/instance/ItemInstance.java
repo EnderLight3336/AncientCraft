@@ -2,15 +2,16 @@ package me.enderlight3336.ancientcraft.item.instance;
 
 import com.alibaba.fastjson2.JSONObject;
 import me.enderlight3336.ancientcraft.item.ItemManager;
-import me.enderlight3336.ancientcraft.item.data.ItemData;
 import me.enderlight3336.ancientcraft.util.ItemUtil;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,17 +51,24 @@ public class ItemInstance {
         im.setLore(this.lore);
 
         if (json.containsKey("baseAttributes")) {
-            JSONObject attributes = json.getJSONObject("attributes");
+            JSONObject attributes = json.getJSONObject("baseAttributes");
             attributes.forEach((str, o) -> im.addAttributeModifier(Attribute.valueOf(str),
-                    new AttributeModifier("ancientcraft", (double) o, AttributeModifier.Operation.ADD_NUMBER)));
+                    new AttributeModifier("ancientcraft", Double.parseDouble(o.toString()), AttributeModifier.Operation.ADD_NUMBER)));
+            attributes.getString("");
+        }
+
+        if (json.containsKey("baseEnchantments")) {
+            JSONObject enchantments = json.getJSONObject("baseEnchantments");
+            enchantments.forEach((s, o) -> originItem.addUnsafeEnchantment(
+                    Registry.ENCHANTMENT.get(NamespacedKey.minecraft(s)), Integer.parseInt(o.toString())));
         }
 
         if (im instanceof Damageable && json.containsKey("durability")) {
             ((Damageable) im).setMaxDamage(json.getInteger("durability"));
         }
 
+        im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         this.originItem.setItemMeta(im);
-
         ItemManager.regItem(this);
     }
 

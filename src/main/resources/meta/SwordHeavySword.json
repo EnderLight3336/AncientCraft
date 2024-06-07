@@ -1,10 +1,17 @@
 {
-    "id" : "HEAVYSWORD",
+    "id" : "heavy_sword",
     "name" : "重剑",
     "material" : "STONE_SWORD",
     "lore" : [
-        "test1"
+        "§m -50%横扫伤害",
+        "§q +30%单体伤害",
+        "§m 降低你的移动速度"
     ],
+    "baseAttributes" : {
+        "GENERIC_ATTACK_DAMAGE" : 12.0,
+        "GENERIC_ATTACK_SPEED" : 0.40,
+        "GENERIC_MOVEMENT_SPEED" : -0.10
+    },
     "star" : [
         {
             "items" : [

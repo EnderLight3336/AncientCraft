@@ -1,8 +1,9 @@
 {
-    "id" : "PARTEFFICIENCY",
+    "id" : "part_efficiency",
     "name" : "效率模块",
     "material" : "GOLDEN_PICKAXE",
     "lore" : ["快 ! 更快 !"],
-    "enchantment" : "EFFICIENCY",
-    "value" : [3, 5, 6, 7, 9, 10]
+    "enchantment" : "efficiency",
+    "value" : [6, 7, 8, 9, 10],
+    "partName" : "效率"
 }

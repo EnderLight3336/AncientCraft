@@ -1,8 +1,9 @@
 {
-    "id" : "PARTRESPIRATION",
+    "id" : "part_respiration",
     "name" : "潜水模块",
     "material" : "TURTLE_HELMET",
     "lore" : ["抱歉, 我带了氧气瓶"],
-    "enchantment" : "RESPIRATION",
-    "value" : [3, 4, 5, 7]
+    "enchantment" : "respiration",
+    "value" : [4, 5, 7],
+    "partName" : "水下呼吸"
 }

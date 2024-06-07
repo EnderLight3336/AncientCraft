@@ -1,6 +1,6 @@
 {
-    "id" : "LONGSWORD",
-    "name" : "长剑",
+    "id" : "short_sword",
+    "name" : "短剑",
     "material" : "IRON_SWORD",
     "lore" : [
         "test1"

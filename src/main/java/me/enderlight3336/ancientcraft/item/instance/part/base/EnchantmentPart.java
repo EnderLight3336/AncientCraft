@@ -1,7 +1,7 @@
 package me.enderlight3336.ancientcraft.item.instance.part.base;
 
 import com.alibaba.fastjson2.JSONObject;
-import me.enderlight3336.ancientcraft.item.data.CommonData;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -9,10 +9,11 @@ import org.bukkit.inventory.ItemStack;
 public final class EnchantmentPart extends BasePart {
     private final Enchantment enc;
     private final Integer[] value;
+
     public EnchantmentPart(JSONObject json) {
         super(json);
 
-        this.enc = Registry.ENCHANTMENT.match(json.getString("enchantement"));
+        this.enc = Registry.ENCHANTMENT.get(NamespacedKey.minecraft(json.getString("enchantment")));
         value = json.getJSONArray("value").toArray(Integer.class);
     }
 
@@ -22,9 +23,7 @@ public final class EnchantmentPart extends BasePart {
     }
 
     @Override
-    public <T extends CommonData> void apply(T data, ItemStack target, int currentPartLevel) {
-        super.apply(data, target, currentPartLevel);
-
+    public void apply(ItemStack target, int currentPartLevel) {
         target.addUnsafeEnchantment(enc, value[currentPartLevel]);
     }
 }

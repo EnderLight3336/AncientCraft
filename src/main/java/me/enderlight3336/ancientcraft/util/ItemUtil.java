@@ -48,10 +48,10 @@ public final class ItemUtil {
                 }
             }
             case GENERIC_KNOCKBACK_RESISTANCE -> {
-                if(material == Material.NETHERITE_HELMET ||
-                material == Material.NETHERITE_CHESTPLATE ||
-                material == Material.NETHERITE_LEGGINGS ||
-                material == Material.NETHERITE_BOOTS)
+                if (material == Material.NETHERITE_HELMET ||
+                        material == Material.NETHERITE_CHESTPLATE ||
+                        material == Material.NETHERITE_LEGGINGS ||
+                        material == Material.NETHERITE_BOOTS)
                     return base - 10;//todo: uncheck
             }
             case GENERIC_ATTACK_DAMAGE -> {
@@ -80,6 +80,9 @@ public final class ItemUtil {
                     }
                 }
             }
+            case PLAYER_ENTITY_INTERACTION_RANGE -> {
+                return base - 3;
+            }
         }
         return base;
     }
@@ -87,6 +90,10 @@ public final class ItemUtil {
     @Nullable
     public static String getId(@NotNull ItemMeta im) {
         return im.getPersistentDataContainer().get(KeyManager.getIdKey(), PersistentDataType.STRING);
+    }
+
+    public static String getId(ItemStack item) {
+        return item.getItemMeta().getPersistentDataContainer().get(KeyManager.getIdKey(), PersistentDataType.STRING);
     }
 
     public static void setId(@NotNull PersistentDataHolder p, String id) {
@@ -101,7 +108,11 @@ public final class ItemUtil {
         im.getPersistentDataContainer().set(KeyManager.getDataIdKey(), PersistentDataType.INTEGER, i);
     }
 
+    /**
+     * @return -1 means no data on this item
+     */
     public static int getDataId(ItemStack item) {
-        return item.getItemMeta().getPersistentDataContainer().get(KeyManager.getDataIdKey(), PersistentDataType.INTEGER);
+        Integer i = item.getItemMeta().getPersistentDataContainer().get(KeyManager.getDataIdKey(), PersistentDataType.INTEGER);
+        return i != null ? i : -1;
     }
 }

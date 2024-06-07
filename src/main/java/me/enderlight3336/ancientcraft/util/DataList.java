@@ -7,10 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.ListIterator;
 import java.util.function.Function;
 
-public class DataList <T extends ItemData> {
+public class DataList<T extends ItemData> {
     private final ArrayDeque<Integer> freeIndex = new ArrayDeque<>();
     private final ArrayList<T> data = new ArrayList<>();
 
@@ -21,15 +20,12 @@ public class DataList <T extends ItemData> {
                 for (File file : files) {
                     if (file.getName().chars().allMatch(Character::isDigit)) {
                         int i0 = Integer.parseInt(file.getName());
-                        data.ensureCapacity(i0);
-                        data.set(i0, function.apply(FileUtil.getJSONByFile(file)));
-                    }
-                }
-
-                ListIterator<T> iterator = data.listIterator();
-                while (iterator.hasNext()) {
-                    if (iterator.next() == null) {
-                        freeIndex.add(iterator.previousIndex());
+                        while (data.size() < i0) {
+                            freeIndex.add(data.size());
+                            data.add(null);
+                        }
+                        assert data.size() == i0 + 1;
+                        data.add(function.apply(FileUtil.getJSONByFile(file)));
                     }
                 }
             }
@@ -44,7 +40,6 @@ public class DataList <T extends ItemData> {
     }
 
     /**
-     *
      * @param v data
      * @return the index of the data
      */

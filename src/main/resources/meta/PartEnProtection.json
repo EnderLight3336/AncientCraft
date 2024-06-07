@@ -1,8 +1,9 @@
 {
-    "id" : "PARTPROTECTION",
+    "id" : "part_protection",
     "name" : "保护模块",
-    "material" : "",
-    "lore" : [],
-    "enchantment" : "PROTECTION",
-    "value" : [5, 6, 7, 8, 9, 10]
+    "material" : "IRON_CHESTPLATE",
+    "lore" : ["坚硬无比"],
+    "enchantment" : "protection",
+    "value" : [6, 7, 8, 9, 10],
+    "partName" : "保护"
 }

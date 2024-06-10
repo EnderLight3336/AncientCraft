@@ -5,10 +5,9 @@ import me.enderlight3336.ancientcraft.item.instance.part.base.AbilityPart;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class PartSuckBlood extends AbilityPart<EntityDamageByEntityEvent> {
+public final class PartSuckBlood extends AbilityPart<EntityDamageByEntityEvent> {
     private final Double[] value;
     private final double max;
 
@@ -20,18 +19,18 @@ public class PartSuckBlood extends AbilityPart<EntityDamageByEntityEvent> {
     }
 
     @Override
-    public void apply(ItemStack target, int currentPartLevel) {
+    protected void unsafeApply(ItemStack target, int currentPartLevel) {
 
     }
 
     @Override
-    public boolean canApply(int current) {
-        return current < value.length;
+    public boolean isMaxLevel(int partLevel) {
+        return value.length == partLevel || value.length < partLevel;
     }
 
     @Override
     public void execute(EntityDamageByEntityEvent event, int partLevel) {
-        if(event.getDamager() instanceof Player player) {
+        if (event.getDamager() instanceof Player player) {
             double re = event.getDamage() * value[partLevel - 1];
             if (re > max) {
                 re = max;
@@ -39,11 +38,12 @@ public class PartSuckBlood extends AbilityPart<EntityDamageByEntityEvent> {
             player.setHealth(Math.min(player.getHealth() + re,
                     player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()
             ));
+            player.sendMessage("!Test only , means you successfully suckblood");
         }
     }
 
     @Override
     public String[] getListenedEventNames() {
-        return new String[]{};
+        return new String[]{EntityDamageByEntityEvent.class.getSimpleName()};
     }
 }

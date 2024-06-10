@@ -2,8 +2,10 @@
   "id" : "part_suckblood",
   "name" : "吸血模块",
   "material" : "REDSTONE",
-  "lore" : ["攻击会吸取对方生命值"],
+  "lore" : ["攻击会吸取对方生命值", "能力模块"],
   "value" : [2.0, 4.0, 6.0, 10.0],
   "max" : 10.0,
-  "partName" : "吸血"
+  "partName" : "吸血",
+  "costSlot" : 1,
+  "applyType" : ["sword"]
 }

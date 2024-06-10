@@ -6,9 +6,10 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.Locale;
 import java.util.UUID;
 
-public class AttributePart extends BasePart {
+public final class AttributePart extends BasePart {
     final Attribute attribute;
     final Double[] value;
     final UUID uuid;
@@ -16,7 +17,7 @@ public class AttributePart extends BasePart {
     public AttributePart(JSONObject json) {
         super(json);
 
-        attribute = Attribute.valueOf(json.getString("attribute"));
+        attribute = Attribute.valueOf(json.getString("attribute").toUpperCase(Locale.ROOT));
         value = json.getJSONArray("value").toArray(Double.class);
         if (json.containsKey("uuid"))
             uuid = UUID.fromString(json.getString("uuid"));
@@ -25,12 +26,12 @@ public class AttributePart extends BasePart {
     }
 
     @Override
-    public boolean canApply(int current) {
-        return current < value.length;
+    public boolean isMaxLevel(int partLevel) {
+        return value.length == partLevel || value.length < partLevel;
     }
 
     @Override
-    public void apply(ItemStack target, int currentPartLevel) {
+    protected void unsafeApply(ItemStack target, int currentPartLevel) {
         ItemMeta im = target.getItemMeta();
         AttributeModifier at = new AttributeModifier(uuid, id + "part", value[currentPartLevel], AttributeModifier.Operation.ADD_NUMBER);
         im.removeAttributeModifier(attribute, at);

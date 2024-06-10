@@ -1,66 +1,80 @@
 package me.enderlight3336.ancientcraft;
 
+import me.enderlight3336.ancientcraft.command.CommandManager;
 import me.enderlight3336.ancientcraft.item.ItemManager;
 import me.enderlight3336.ancientcraft.listener.DummyListener;
 import me.enderlight3336.ancientcraft.listener.EntityListener;
 import me.enderlight3336.ancientcraft.listener.ItemProtectListener;
 import me.enderlight3336.ancientcraft.listener.PlayerListener;
 import me.enderlight3336.ancientcraft.multiple.MultipleBlockManager;
+import me.enderlight3336.ancientcraft.recipe.RecipeManager;
 import me.enderlight3336.ancientcraft.util.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Keyed;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.RayTraceResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public final class AncientCraft extends JavaPlugin {
     private static AncientCraft instance;
-    private static String version;
+    private static boolean reload = false;
+
+    public static AncientCraft getInstance() {
+        return instance;
+    }
+
+    public static String getVersion() {
+        return instance.getDescription().getVersion();
+    }
 
     @Override
     public void onLoad() {
         super.onLoad();
 
         instance = this;
-        version = YamlConfiguration.loadConfiguration(new InputStreamReader(instance.getResource("plugin.yml"))).getString("version");
     }
 
     @Override
     public void onEnable() {
         FileUtil.init();
-        ConfigInstance.init();
-        L18N.init();
+        //L18N.init();
         ItemManager.init();
         MultipleBlockManager.init();
+        RecipeManager.recipeManager.init();
+        RecipeManager.recipeManager = null;
 
         getServer().getPluginManager().registerEvents(new DummyListener(), instance);
         getServer().getPluginManager().registerEvents(new EntityListener(), instance);
         getServer().getPluginManager().registerEvents(new ItemProtectListener(), instance);
         getServer().getPluginManager().registerEvents(new PlayerListener(), instance);
 
-        new DataSaver().runTaskTimerAsynchronously(instance, 6000L, 6000L);
-        new LoreBuildService().runTaskTimerAsynchronously(instance, 10L, 10L);
+        new AsyncDataSaver().runTaskTimerAsynchronously(instance, 6000L, 6000L);
+        new AsyncLoreBuilder().runTaskTimerAsynchronously(instance, 10L, 10L);
 
         getLogger().info("================AncientCraft================");
-        getLogger().info("       version: " + version);
+        getLogger().info("       version: " + getVersion());
         getLogger().info("**************Load Successfully*************");
     }
 
     @Override
     public void onDisable() {
-        DataSaver.execute();
-        LoreBuildService.execute();
+        AsyncDataSaver.execute();
+        AsyncLoreBuilder.execute();
 
         instance = null;
     }
@@ -74,8 +88,12 @@ public final class AncientCraft extends JavaPlugin {
             if (args[0].equalsIgnoreCase("give")) {
                 return new ArrayList<>(ItemManager.getRegisteredItem().keySet());
             }
-        }
+        }//todo
         return null;
+    }
+
+    public static boolean isReload() {
+        return reload;
     }
 
     @Override
@@ -111,7 +129,7 @@ public final class AncientCraft extends JavaPlugin {
                     }
                 }
                 case "dummy" -> {
-                    if (!CommandUtil.requirePlayer(sender)) {
+                    if (!CommandManager.requirePlayer(sender)) {
                         break;
                     }
                     Class<? extends Entity> c;
@@ -139,32 +157,61 @@ public final class AncientCraft extends JavaPlugin {
                     } else {
                         c = EntityType.ZOMBIE.getEntityClass();
                     }
-                    ((LivingEntity) ((Player) sender).getWorld().spawn(((Player) sender).getLocation(), c, false, entity -> {
-                        LivingEntity e = (LivingEntity) entity;
-                        e.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(5000);
-                        ItemUtil.setId(entity, "dummy");
-                    })).setAI(false);
+                    ((Player) sender).getWorld().spawn(
+                            ((Player) sender).getLocation(),
+                            c,
+                            false,
+                            entity -> {
+                                LivingEntity e = (LivingEntity) entity;
+                                e.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(5000);
+                                entity.getPersistentDataContainer().set(KeyManager.getIdKey(), PersistentDataType.STRING, "dummy");
+                                ((LivingEntity) entity).setAI(false);
+                            });
                 }
                 case "id" -> {
-                    if (!CommandUtil.requirePlayer(sender)) {
+                    if (!CommandManager.requirePlayer(sender)) {
                         break;
                     }
                     String id = ItemUtil.getId(((Player) sender).getInventory().getItemInMainHand().getItemMeta());
                     sender.sendMessage(id == null ? "你手持的不是AncientCraft的物品 !" : "id: " + id);
                 }
-                default -> CommandUtil.sendHelp(sender);
+                case "reload" -> {
+                    reload = true;
+                    Bukkit.getOnlinePlayers().forEach(player -> player.kickPlayer("插件AncientCraft正在重载中"));
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            AsyncDataSaver.execute();
+                            AsyncLoreBuilder.execute();
+
+                            Iterator<Recipe> iterator = Bukkit.recipeIterator();
+                            List<Keyed> recipes = new ArrayList<>();
+                            while (iterator.hasNext()) {
+                                Recipe recipe = iterator.next();
+                                if (recipe instanceof Keyed && ((Keyed) recipe).getKey().getNamespace().equals("ancientcraft"))
+                                    recipes.add((Keyed) recipe);
+                            }
+                            recipes.forEach(recipe -> Bukkit.removeRecipe(recipe.getKey()));
+
+                            RecipeManager.recipeManager = new RecipeManager();
+                            ConfigInstance.getExpMap().clear();
+                            FileUtil.init();
+                            ItemManager.reload();
+                            MultipleBlockManager.reload();
+                            RecipeManager.recipeManager.init();
+                            RecipeManager.recipeManager = null;
+                            reload = false;
+                            getLogger().info("================AncientCraft================");
+                            getLogger().info("        version: " + getVersion());
+                            getLogger().info("*************Reload Successfully************");
+                        }
+                    }.runTaskAsynchronously(instance);
+                }
+                default -> CommandManager.sendHelp(sender);
             }
         } else {
-            CommandUtil.sendHelp(sender);
+            CommandManager.sendHelp(sender);
         }
         return true;
-    }
-
-    public static AncientCraft getInstance() {
-        return instance;
-    }
-
-    public static String getVersion() {
-        return version;
     }
 }

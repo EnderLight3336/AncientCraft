@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class Star {
@@ -14,10 +15,10 @@ public class Star {
 
     public Star(JSONObject json) {
         json.getJSONArray("items").forEach(object ->
-                items.put(Material.valueOf(((JSONObject) object).getString("material")),
+                items.put(Material.valueOf(((JSONObject) object).getString("material").toUpperCase(Locale.ROOT)),
                         ((JSONObject) object).getIntValue("amount")));
         json.getJSONArray("attributes").forEach(object ->
-                attributes.put(Attribute.valueOf(((JSONObject) object).getString("name")),
+                attributes.put(Attribute.valueOf(((JSONObject) object).getString("name").toUpperCase(Locale.ROOT)),
                         ((JSONObject) object).getDouble("amount")));
     }
 

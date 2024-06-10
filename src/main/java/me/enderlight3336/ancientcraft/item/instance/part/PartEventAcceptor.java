@@ -8,6 +8,7 @@ public interface PartEventAcceptor<T extends Event> {
      * Shouldn't call this method direct, call {@link EventAcceptor#accept(Event)} instantly
      */
     void execute(T event, int partLevel);
+
     /**
      * @throws ClassCastException May throw if you don't check whether event can be cast
      */
@@ -15,5 +16,6 @@ public interface PartEventAcceptor<T extends Event> {
     default void accept(Event event, int partLevel) {
         execute((T) event, partLevel);
     }
+
     String getId();
 }

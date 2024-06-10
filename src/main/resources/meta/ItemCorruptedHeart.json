@@ -1,0 +1,19 @@
+{
+    "id" : "corrupted_heart",
+    "name" : "腐败之心",
+    "material" : "green_dye",
+    "lore" : ["一颗已经腐烂的心脏, 但仍然跳动着......"],
+    "baseEnchantments" : {
+        "unbreaking" : 1
+    },
+    "looting" : [
+        {
+            "entityType" : "ZOMBIE",
+            "lootType" : "common",
+            "amount" : 1,
+            "chance" : 0.01,
+            "chancePerLooting" : 0.00175,
+            "multiple" : 0
+        }
+    ]
+}

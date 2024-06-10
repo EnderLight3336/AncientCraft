@@ -7,17 +7,29 @@ import me.enderlight3336.ancientcraft.AncientCraft;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-public class FileUtil {
+public final class FileUtil {
     static final File fold = AncientCraft.getInstance().getDataFolder();
 
     public static void init() {
+        File item = new File(fold + "/meta");
+        File config = new File(fold, "config.json");
         try {
             if (!fold.exists()) {
                 fold.mkdirs();
             }
-            File item = new File(fold + "/meta");
+
             item.mkdirs();
-            writeFromJar(fold, "/config.json");
+
+            if (config.exists()) {
+                JSONObject ne = JSON.parseObject(AncientCraft.class.getResourceAsStream("/config.json"), StandardCharsets.UTF_8);
+                JSONObject old = JSON.parseObject(new FileInputStream(config), StandardCharsets.UTF_8);
+                ne.putAll(old);
+                ConfigInstance.init(ne);
+                write(config, ne.toString());
+            } else {
+                writeFromJar(fold, "/config.json");
+                ConfigInstance.init();
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -20,4 +20,8 @@ public final class KeyManager {
         return starKey;
     }
 
+    public static NamespacedKey genRecipeKey(String type, int index, String id) {
+        return new NamespacedKey(AncientCraft.getInstance(),
+                type + "_" + index + "_" + id);
+    }
 }

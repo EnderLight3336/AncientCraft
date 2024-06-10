@@ -1,5 +1,6 @@
 package me.enderlight3336.ancientcraft.util;
 
+import me.enderlight3336.ancientcraft.item.ItemManager;
 import me.enderlight3336.ancientcraft.item.data.ItemData;
 import me.enderlight3336.ancientcraft.item.data.LevelAndPartData;
 import org.bukkit.inventory.ItemStack;
@@ -10,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public final class LoreBuildService extends BukkitRunnable {
+public final class AsyncLoreBuilder extends BukkitRunnable {
     private static Map<ItemStack, ItemData> re_build = new HashMap<>();
     private static Map<ItemStack, ItemData> exp_build = new HashMap<>();
     private static Map<ItemStack, ItemData> level_build = new HashMap<>();
@@ -29,7 +30,7 @@ public final class LoreBuildService extends BukkitRunnable {
             re_build = new HashMap<>();
             copy.forEach((item, data) -> {
                 ItemMeta im = item.getItemMeta();
-                im.setLore(data.rebuildLore(im.getLore()));
+                im.setLore(data.rebuildLore(ItemManager.getItemInstance(item).getLore()));
                 item.setItemMeta(im);
             });
         } else {
@@ -45,7 +46,7 @@ public final class LoreBuildService extends BukkitRunnable {
             level = copy.keySet();
             copy.forEach((item, data) -> {
                 ItemMeta im = item.getItemMeta();
-                im.setLore(((LevelAndPartData)data).loreChangeOnLevel(im.getLore()));
+                im.setLore(((LevelAndPartData) data).loreChangeOnLevel(im.getLore()));
                 item.setItemMeta(im);
             });
         } else {
@@ -81,18 +82,22 @@ public final class LoreBuildService extends BukkitRunnable {
     }
 
     public static void addReBuildTask(ItemStack item, ItemData data) {
-        re_build.put(item, data);
+        if (!re_build.containsKey(item))
+            re_build.put(item, data);
     }
 
     public static void addExpBuildTask(ItemStack item, LevelAndPartData data) {
-        exp_build.put(item, data);
+        if (!exp_build.containsKey(item))
+            exp_build.put(item, data);
     }
 
     public static void addLevelBuildTask(ItemStack item, LevelAndPartData data) {
-        level_build.put(item, data);
+        if (!level_build.containsKey(item))
+            level_build.put(item, data);
     }
 
     public static void addPartBuildTask(ItemStack item, LevelAndPartData data) {
-        part_build.put(item, data);
+        if (!part_build.containsKey(item))
+            part_build.put(item, data);
     }
 }

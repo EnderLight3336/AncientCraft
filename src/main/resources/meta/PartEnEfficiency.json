@@ -2,8 +2,10 @@
     "id" : "part_efficiency",
     "name" : "效率模块",
     "material" : "GOLDEN_PICKAXE",
-    "lore" : ["快 ! 更快 !"],
+    "lore" : ["快 ! 更快 !", "附魔模块"],
     "enchantment" : "efficiency",
     "value" : [6, 7, 8, 9, 10],
-    "partName" : "效率"
+    "partName" : "效率",
+    "costSlot" : 1,
+    "applyType" : ["pickaxe"]
 }

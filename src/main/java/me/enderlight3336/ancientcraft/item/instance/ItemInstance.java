@@ -1,20 +1,28 @@
 package me.enderlight3336.ancientcraft.item.instance;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import me.enderlight3336.ancientcraft.item.ItemManager;
+import me.enderlight3336.ancientcraft.loot.CustomLootTableManager;
+import me.enderlight3336.ancientcraft.recipe.RecipeManager;
+import me.enderlight3336.ancientcraft.util.ConfigInstance;
 import me.enderlight3336.ancientcraft.util.ItemUtil;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
+import me.enderlight3336.ancientcraft.util.KeyManager;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class ItemInstance {
     protected final String id;
@@ -24,7 +32,11 @@ public class ItemInstance {
     protected final ItemStack originItem;
 
     public ItemInstance(String id, Material material, String name, List<String> lore) {
-        this.id = id;
+        if (ConfigInstance.isBeta()) {
+            this.id = "beta_" + id;
+        } else {
+            this.id = id;
+        }
         this.name = name;
         this.material = material;
 
@@ -38,11 +50,15 @@ public class ItemInstance {
         originItem.setItemMeta(im);
     }
 
-    public ItemInstance(JSONObject json) {
-        this.id = json.getString("id");
-        this.name = json.getString("name");
-        this.material = Material.valueOf(json.getString("material"));
-        this.lore.addAll(json.getJSONArray("lore").toJavaList(String.class));
+    public ItemInstance(JSONObject itemInfo) {
+        if (ConfigInstance.isBeta()) {
+            this.id = "beta_" + itemInfo.getString("id");
+        } else {
+            this.id = itemInfo.getString("id");
+        }
+        this.name = itemInfo.getString("name");
+        this.material = Material.valueOf(itemInfo.getString("material").toUpperCase(Locale.ROOT));
+        this.lore.addAll(itemInfo.getJSONArray("lore").toJavaList(String.class));
 
         originItem = new ItemStack(this.material);
         ItemMeta im = originItem.getItemMeta();
@@ -50,25 +66,55 @@ public class ItemInstance {
         ItemUtil.setId(im, id);
         im.setLore(this.lore);
 
-        if (json.containsKey("baseAttributes")) {
-            JSONObject attributes = json.getJSONObject("baseAttributes");
-            attributes.forEach((str, o) -> im.addAttributeModifier(Attribute.valueOf(str),
+        if (itemInfo.containsKey("baseAttributes")) {
+            JSONObject attributes = itemInfo.getJSONObject("baseAttributes");
+            attributes.forEach((str, o) -> im.addAttributeModifier(Attribute.valueOf(str.toUpperCase()),
                     new AttributeModifier("ancientcraft", Double.parseDouble(o.toString()), AttributeModifier.Operation.ADD_NUMBER)));
-            attributes.getString("");
         }
 
-        if (json.containsKey("baseEnchantments")) {
-            JSONObject enchantments = json.getJSONObject("baseEnchantments");
-            enchantments.forEach((s, o) -> originItem.addUnsafeEnchantment(
-                    Registry.ENCHANTMENT.get(NamespacedKey.minecraft(s)), Integer.parseInt(o.toString())));
+        if (im instanceof Damageable && itemInfo.containsKey("durability")) {
+            int damage = itemInfo.getIntValue("durability");
+            ((Damageable) im).setMaxDamage(damage);
         }
 
-        if (im instanceof Damageable && json.containsKey("durability")) {
-            ((Damageable) im).setMaxDamage(json.getInteger("durability"));
+        if (itemInfo.containsKey("baseEnchantments")) {
+            JSONObject enchantments = itemInfo.getJSONObject("baseEnchantments");
+            if (enchantments.size() == 1 && enchantments.containsKey("unbreaking")) {
+                im.addEnchant(Enchantment.UNBREAKING, 1, true);
+                im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            } else {
+                enchantments.forEach((s, o) -> im.addEnchant(
+                        Registry.ENCHANTMENT.get(NamespacedKey.minecraft(s.toLowerCase(Locale.ROOT))), Integer.parseInt(o.toString()), true));
+            }
+        }
+
+        if (itemInfo.containsKey("potionInfo")) {
+            JSONObject potion = itemInfo.getJSONObject("potionInfo");
+            PotionMeta pm = (PotionMeta) im;
+            pm.setBasePotionType(PotionType.valueOf(potion.getString("baseType").toUpperCase()));
+            JSONObject color = potion.getJSONObject("color");
+            pm.setColor(Color.fromRGB(color.getIntValue("red"), color.getIntValue("green"), color.getIntValue("blue")));
+            JSONArray effect = potion.getJSONArray("effect");
+            int index = 0;
+            while (index < effect.size()) {
+                JSONObject jsonObject = effect.getJSONObject(index);
+                index++;
+                pm.addCustomEffect(new PotionEffect(Registry.EFFECT.get(NamespacedKey.minecraft(jsonObject.getString("type"))),
+                        jsonObject.getIntValue("time") * 20, jsonObject.getIntValue("level")), true);
+            }
         }
 
         im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         this.originItem.setItemMeta(im);
+
+        if (itemInfo.containsKey("recipes")) {
+            RecipeManager.recipeManager.put(itemInfo.getJSONObject("recipes"), this);
+        }
+
+        if (itemInfo.containsKey("looting")) {
+            CustomLootTableManager.put(this, itemInfo.getJSONArray("looting"));
+        }
+
         ItemManager.regItem(this);
     }
 
@@ -97,11 +143,11 @@ public class ItemInstance {
         return item;
     }
 
-    public String getId() {
+    public final String getId() {
         return id;
     }
 
-    public String getName() {
+    public final String getName() {
         return name;
     }
 
@@ -111,5 +157,9 @@ public class ItemInstance {
 
     public List<String> getLore() {
         return lore;
+    }
+
+    public boolean checkType(String typeName) {
+        return typeName.equals("item");
     }
 }

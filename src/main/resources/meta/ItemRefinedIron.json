@@ -1,0 +1,19 @@
+{
+    "id" : "refined_iron",
+    "name" : "精炼铁",
+    "material" : "iron_ingot",
+    "lore" : ["十分坚硬"],
+    "baseEnchantments" : {
+        "unbreaking" : 1
+    },
+    "recipes" : {
+        "furnace" : [
+            {
+                "input" : "iron_block",
+                "resultAmount" : 1,
+                "cookingTime" : 600,
+                "exp" : 250
+            }
+        ]
+    }
+}

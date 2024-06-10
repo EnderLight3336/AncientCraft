@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
-public class UUIDDataTypeImpl implements PersistentDataType<byte[], UUID> {
+public final class UUIDDataTypeImpl implements PersistentDataType<byte[], UUID> {
     private static final UUIDDataTypeImpl instance = new UUIDDataTypeImpl();
 
     public static UUIDDataTypeImpl get() {

@@ -1,6 +1,5 @@
 package me.enderlight3336.ancientcraft.item.instance;
 
-import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import me.enderlight3336.ancientcraft.item.Star;
 import me.enderlight3336.ancientcraft.util.ConfigInstance;
@@ -39,9 +38,9 @@ public interface Starable {
     }
 
     default void set(JSONObject json) {
-        JSONArray array = json.getJSONArray("star");
-        for (int i = 0; i < array.size(); i++) {
-            star[i] = new Star(array.getJSONObject(i));
-        }
+        //JSONArray array = json.getJSONArray("star");
+        //for (int i = 0; i < array.size(); i++) {
+        //    star[i] = new Star(array.getJSONObject(i));
+        //}
     }
 }

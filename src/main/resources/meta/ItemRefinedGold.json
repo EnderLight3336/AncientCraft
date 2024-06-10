@@ -1,0 +1,19 @@
+{
+    "id" : "refined_gold",
+    "name" : "24K纯金",
+    "material" : "gold_ingot",
+    "lore" : ["货真价实"],
+    "baseEnchantments" : {
+        "unbreaking" : 1
+    },
+    "recipes" : {
+        "furnace" : [
+            {
+                "input" : "gold_block",
+                "resultAmount" : 1,
+                "cookingTime" : 600,
+                "exp" : 250
+            }
+        ]
+    }
+}

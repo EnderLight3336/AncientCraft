@@ -1,0 +1,19 @@
+{
+    "id" : "refined_copper",
+    "name" : "精炼铜",
+    "material" : "copper_ingot",
+    "lore" : ["泛着紫光"],
+    "baseEnchantments" : {
+        "unbreaking" : 1
+    },
+    "recipes" : {
+        "furnace" : [
+            {
+                "input" : "copper_block",
+                "resultAmount" : 1,
+                "cookingTime" : 600,
+                "exp" : 250
+            }
+        ]
+    }
+}

@@ -2,8 +2,10 @@
     "id" : "part_health",
     "name" : "生命模块",
     "material" : "REDSTONE",
-    "lore" : ["提升你的生命力"],
+    "lore" : ["提升你的生命力", "属性模块"],
     "attribute" : "GENERIC_MAX_HEALTH",
     "value" : [2.0, 4.0, 6.0, 10.0],
-    "partName" : "生命提升"
+    "partName" : "生命提升",
+    "costSlot" : 1,
+    "applyType" : ["armor"]
 }

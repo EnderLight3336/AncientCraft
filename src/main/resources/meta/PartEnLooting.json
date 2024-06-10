@@ -1,0 +1,11 @@
+{
+  "id" : "part_looting",
+  "name" : "抢夺模块",
+  "material" : "EMERALD",
+  "lore" : ["-", "附魔模块"],
+  "enchantment" : "looting",
+  "value" : [4, 5, 6, 7],
+  "partName" : "抢夺",
+  "costSlot" : 1,
+  "applyType" : ["sword"]
+}

@@ -10,22 +10,11 @@
     "baseAttributes" : {
         "GENERIC_ATTACK_DAMAGE" : 12.0,
         "GENERIC_ATTACK_SPEED" : 0.40,
-        "GENERIC_MOVEMENT_SPEED" : -0.10
+        "GENERIC_MOVEMENT_SPEED" : -0.005
     },
-    "star" : [
-        {
-            "items" : [
-                {
-                    "material" : "DIAMOND",
-                    "amount" : 1
-                }
-            ],
-            "attributes" : [
-                {
-                    "name" : "GENERIC_ATTACK_DAMAGE",
-                    "amount" : 2.5
-                }
-            ]
-        }
-    ]
+    "baseEnchantments" : {
+        "sharpness" : 5,
+        "looting" : 3
+    },
+    "durability" : 10000,
 }

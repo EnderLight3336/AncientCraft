@@ -1,23 +1,33 @@
 package me.enderlight3336.ancientcraft.listener;
 
 import me.enderlight3336.ancientcraft.item.ItemManager;
+import me.enderlight3336.ancientcraft.item.instance.ItemInstance;
+import me.enderlight3336.ancientcraft.item.instance.part.base.BasePart;
+import me.enderlight3336.ancientcraft.item.instance.type.ItemLevelAndPartble;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockCookEvent;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.inventory.*;
+import org.bukkit.inventory.CraftingRecipe;
 import org.bukkit.inventory.ItemStack;
 
 public final class ItemProtectListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPrepareAnvil(PrepareAnvilEvent event) {
-        for (ItemStack item : event.getInventory().getContents()) {
-            if (item != null) {
-                if (ItemManager.isACItem(item)) {
-                    event.setResult(null);
-                    return;
-                }
+        ItemStack[] inv = event.getInventory().getContents();
+        ItemInstance i1 = ItemManager.getItemInstance(inv[0]);
+        ItemInstance i2 = ItemManager.getItemInstance(inv[1]);
+        if(i1 != null) {
+            if (i1 instanceof ItemLevelAndPartble<?> && i2 instanceof BasePart) {
+                //
+            } else {
+                event.setResult(null);
+            }
+        } else {
+            if (i2 != null) {
+                event.setResult(null);
             }
         }
     }
@@ -33,8 +43,12 @@ public final class ItemProtectListener implements Listener {
         for (ItemStack item : event.getInventory().getMatrix()) {
             if (item != null) {
                 if (ItemManager.isACItem(item)) {
-                    event.getInventory().setResult(null);
-                    return;
+                    if (event.isRepair()) {
+                        event.getInventory().setResult(null);
+                    } else if (event.getRecipe() instanceof CraftingRecipe recipe) {
+                        if (!recipe.getKey().getNamespace().equals("ancientcraft"))
+                            event.getInventory().setResult(null);
+                    }
                 }
             }
         }

@@ -9,27 +9,30 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.function.Function;
 
-public class DataList<T extends ItemData> {
+public final class DataList<T extends ItemData> {
     private final ArrayDeque<Integer> freeIndex = new ArrayDeque<>();
-    private final ArrayList<T> data = new ArrayList<>();
+    private final ArrayList<T> data;
 
     public DataList(@NotNull File fold, Function<JSONObject, T> function) {
         if (fold.exists()) {
             File[] files = fold.listFiles();
             if (files != null) {
+                data = new ArrayList<>(files.length + 10);
                 for (File file : files) {
                     if (file.getName().chars().allMatch(Character::isDigit)) {
-                        int i0 = Integer.parseInt(file.getName());
-                        while (data.size() < i0) {
+                        int index = Integer.parseInt(file.getName());
+                        while (data.size() < index) {
                             freeIndex.add(data.size());
                             data.add(null);
                         }
-                        assert data.size() == i0 + 1;
                         data.add(function.apply(FileUtil.getJSONByFile(file)));
                     }
                 }
+            } else {
+                data = new ArrayList<>();
             }
         } else {
+            data = new ArrayList<>();
             fold.mkdirs();
         }
     }

@@ -2,8 +2,10 @@
     "id" : "part_sharpness",
     "name" : "锋利模块",
     "material" : "IRON_SWORD",
-    "lore" : ["磨刀不误砍柴功"],
+    "lore" : ["磨刀不误砍柴功", "附魔模块"],
     "enchantment" : "sharpness",
     "value" : [6, 7, 8, 9, 10],
-    "partName" : "锋利"
+    "partName" : "锋利",
+    "costSlot" : 1,
+    "applyType" : ["sword"]
 }

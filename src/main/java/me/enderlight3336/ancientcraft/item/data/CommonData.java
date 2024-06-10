@@ -6,11 +6,8 @@ import me.enderlight3336.ancientcraft.item.instance.ItemInstance;
 import me.enderlight3336.ancientcraft.item.instance.part.PartEventAcceptor;
 import me.enderlight3336.ancientcraft.item.instance.part.base.AbilityPart;
 import me.enderlight3336.ancientcraft.item.instance.part.base.BasePart;
-import me.enderlight3336.ancientcraft.item.instance.sword.ISword;
-import me.enderlight3336.ancientcraft.listener.acceptor.EventAcceptor;
 import me.enderlight3336.ancientcraft.util.ConfigInstance;
 import org.bukkit.event.Event;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -19,11 +16,11 @@ import java.util.List;
 import java.util.Map;
 
 public class CommonData implements ItemData, LevelAndPartData {
-    protected int exp;
-    protected int level;
     protected final List<String> lore = new ArrayList<>();
     protected final Map<String, Integer> parts = new HashMap<>();
     protected final Map<String, List<PartEventAcceptor<?>>> eventPart = new HashMap<>();
+    protected int exp;
+    protected int level;
 
     {
         lore.add("模块:");
@@ -38,15 +35,14 @@ public class CommonData implements ItemData, LevelAndPartData {
         level = 0;
     }
 
-    @SuppressWarnings("unchecked")
     public CommonData(@NotNull JSONObject json) {
         exp = json.getIntValue("exp");
         level = json.getIntValue("level");
         json.getJSONObject("parts").forEach((s, o) -> parts.put(s, (Integer) o));
         parts.forEach((s, integer) -> {
             ItemInstance instance = ItemManager.getById(s);
-            if(instance != null) {
-                if(instance instanceof AbilityPart<?>) {
+            if (instance != null) {
+                if (instance instanceof AbilityPart<?>) {
                     registerEventPart((AbilityPart<?>) instance);
                 }
             }
@@ -56,11 +52,15 @@ public class CommonData implements ItemData, LevelAndPartData {
     @Override
     public void registerEventPart(AbilityPart<?> part) {
         for (String s : part.getListenedEventNames()) {
-            if(eventPart.containsKey(s)) {
-                List<PartEventAcceptor<?>> list = eventPart.get(s);
-                if(!list.contains(part)) {
+            List<PartEventAcceptor<?>> list = eventPart.get(s);
+            if (list != null) {
+                if (!list.contains(part)) {
                     list.add(part);
                 }
+            } else {
+                list = new ArrayList<>();
+                list.add(part);
+                eventPart.put(s, list);
             }
         }
     }
@@ -68,7 +68,7 @@ public class CommonData implements ItemData, LevelAndPartData {
     @Override
     public void acceptEvent(Event event, ItemInstance itemInMainHand) {
         List<PartEventAcceptor<?>> list = eventPart.get(event.getEventName());
-        if(list != null) {
+        if (list != null) {
             list.forEach(eventAcceptor -> eventAcceptor.accept(event, parts.get(eventAcceptor.getId())));
         }
     }
@@ -119,29 +119,31 @@ public class CommonData implements ItemData, LevelAndPartData {
     }
 
     @Override
-    public void setExp(int i) {
-        this.exp = i;
-    }
-
-    @Override
-    public void setLevel(int i) {
-        this.level = i;
+    public int getFreeSlot() {
+        int def = level * ConfigInstance.getSlotPerLevel();
+        for (Map.Entry<String, Integer> entry : parts.entrySet())
+            def = def - ((BasePart) ItemManager.getById(entry.getKey())).getCostSlot() * entry.getValue();
+        return def;
     }
 
     /**
      * @param i how many exp will add to this item
-     * @return true if level up, false means not level up
+     * @return -1 means not level up, other means level up and return targetLevel
      */
     @Override
-    public boolean addExp(int i) {
-        int expCap = ConfigInstance.getNeedExp(level);
+    public int addExp(int i) {
         this.exp = this.exp + i;
-        if (this.exp >= expCap) {
-            this.exp = this.exp - expCap;
-            this.level++;
-            return true;
+        int cap = ConfigInstance.getNeedExp(this.level);
+        if (cap >= this.exp) {
+            this.exp = this.exp - cap;
+            level++;
+            while (this.exp >= (cap = ConfigInstance.getNeedExp(this.level))) {
+                this.exp = this.exp - cap;
+                level++;
+            }
+            return this.level;
         }
-        return false;
+        return -1;
     }
 
     @Override
@@ -150,8 +152,18 @@ public class CommonData implements ItemData, LevelAndPartData {
     }
 
     @Override
+    public void setExp(int i) {
+        this.exp = i;
+    }
+
+    @Override
     public int getLevel() {
         return level;
+    }
+
+    @Override
+    public void setLevel(int i) {
+        this.level = i;
     }
 
     @Override
@@ -160,7 +172,7 @@ public class CommonData implements ItemData, LevelAndPartData {
     }
 
     @Override
-    public int removePart(String id) {
+    public int removePart(String id) {//todo
         return parts.remove(id);
     }
 
@@ -171,7 +183,6 @@ public class CommonData implements ItemData, LevelAndPartData {
     public int getPartLevel(String id) {
         return parts.getOrDefault(id, 0);
     }
-
 
     @Override
     public String toJsonString() {

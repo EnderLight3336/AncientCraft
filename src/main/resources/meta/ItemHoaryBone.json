@@ -1,0 +1,19 @@
+{
+    "id" : "hoary_bone",
+    "name" : "万年陈骨",
+    "material" : "green_dye",
+    "lore" : ["它的存在无法追溯"],
+    "baseEnchantments" : {
+        "unbreaking" : 1
+    },
+    "looting" : [
+        {
+            "entityType" : "SKELETON",
+            "lootType" : "common",
+            "amount" : 1,
+            "chance" : 0.01,
+            "chancePerLooting" : 0.00175,
+            "multiple" : 0
+        }
+    ]
+}

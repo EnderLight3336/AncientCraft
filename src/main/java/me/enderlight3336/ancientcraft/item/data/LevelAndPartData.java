@@ -8,17 +8,21 @@ import java.util.List;
 
 public interface LevelAndPartData extends ItemData {
 
+    List<String> rebuildLore(List<String> origin);
+
     List<String> loreChangeOnLevel(List<String> origin);
 
     List<String> loreChangeOnExp(List<String> origin);
 
     List<String> loreChangeOnPart(List<String> origin);
 
+    int getFreeSlot();
+
     void setExp(int i);
 
     void setLevel(int i);
 
-    boolean addExp(int i);
+    int addExp(int i);
 
     int getExp();
 

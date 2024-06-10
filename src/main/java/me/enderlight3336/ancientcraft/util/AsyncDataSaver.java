@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class DataSaver extends BukkitRunnable {
+public final class AsyncDataSaver extends BukkitRunnable {
     private static Map<String, List<Entry>> map = new HashMap<>();
 
     @Override

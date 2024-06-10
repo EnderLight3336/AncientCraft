@@ -2,8 +2,10 @@
     "id" : "part_playerblockrange",
     "name" : "方块触及模块",
     "material" : "DIAMOND_PICKAXE",
-    "lore" : ["增加玩家的方块触及距离"],
+    "lore" : ["增加玩家的方块触及距离", "属性模块"],
     "attribute" : "PLAYER_BLOCK_INTERACTION_RANGE",
     "value" : [0.5, 1.0, 2.0, 3.0],
-    "partName" : "方块交互距离"
+    "partName" : "方块交互距离",
+    "costSlot" : 1,
+    "applyType" : ["sword"]
 }

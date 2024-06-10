@@ -2,8 +2,10 @@
     "id" : "part_protection",
     "name" : "保护模块",
     "material" : "IRON_CHESTPLATE",
-    "lore" : ["坚硬无比"],
+    "lore" : ["坚硬无比", "附魔模块"],
     "enchantment" : "protection",
     "value" : [6, 7, 8, 9, 10],
-    "partName" : "保护"
+    "partName" : "保护",
+    "costSlot" : 1,
+    "applyType" : ["armor"]
 }

@@ -15,20 +15,10 @@
         "GENERIC_MOVEMENT_SPEED" : 0.10,
         "PLAYER_ENTITY_INTERACTION_RANGE" : 5.0
     },
-    "star" : [
-        {
-            "items" : [
-                {
-                    "material" : "DIAMOND",
-                    "amount" : 1
-                }
-            ],
-            "attributes" : [
-                {
-                    "name" : "GENERIC_ATTACK_DAMAGE",
-                    "amount" : 2.5
-                }
-            ]
-        }
-    ]
+    "baseEnchantments" : {
+        "sharpness" : 5,
+        "looting" : 3,
+        "sweeping_edge" : 5
+    },
+    "durability" : 10000,
 }

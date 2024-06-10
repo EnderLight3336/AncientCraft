@@ -1,0 +1,19 @@
+{
+    "id" : "refined_diamond",
+    "name" : "烧制钻石",
+    "material" : "diamond",
+    "lore" : ["看起来十分昂贵"],
+    "baseEnchantments" : {
+        "unbreaking" : 1
+    },
+    "recipes" : {
+        "furnace" : [
+            {
+                "input" : "diamond_block",
+                "resultAmount" : 1,
+                "cookingTime" : 600,
+                "exp" : 250
+            }
+        ]
+    }
+}

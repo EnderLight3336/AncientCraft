@@ -19,11 +19,12 @@
         "shapedCraft" : [
             {
                 "resultAmount" : 1,
-                "recipe" : [
-                    "ac:dragon_blood", "ac:refined_iron", "ac:dragon_blood",
-                    "ac:dragon_blood", "ac:refined_iron", "ac:dragon_blood",
-                    "ac:dragon_blood", "stick"          , "ac:dragon_blood"
-                ]
+                "recipe" : {
+                    "sharp" : ["aba", "aba", "aca"],
+                    "a" : "ac:dragon_blood",
+                    "b" :"ac:refined_iron",
+                    "c" : "stick"
+                }
             }
         ]
     }

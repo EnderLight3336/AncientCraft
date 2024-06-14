@@ -104,6 +104,24 @@ public class ItemInstance {
             }
         }
 
+        if (itemInfo.containsKey("foodInfo")) {
+            FoodComponent food = im.getFood();
+            JSONObject foodInfo = itemInfo.getJSONObject("foodInfo");
+            food.setCanAlwaysEat(foodInfo.getBooleanValue("canAlwaysEat"));
+            food.setEatSeconds(foodInfo.getFloatValue("eatSeconds"));
+            food.setNutrition(foodInfo.getIntValue("nutrition"));
+            food.setSaturation(foodInfo.getFloatValue("saturation"));
+            if (foodInfo.containsKey("effect")) {
+                JSONArray effect = foodInfo.getJSONArray("effect");
+                int index = 0;
+                while (index < effect.size()) {
+                    JSONObject e = effect.getJSONObject(index);
+                    index++;
+                    foodInfo.addEffect()
+                }
+            }
+        }
+
         im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         this.originItem.setItemMeta(im);
 

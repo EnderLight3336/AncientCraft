@@ -23,4 +23,6 @@ public interface ItemDatable<T extends ItemData> {
     T getData(ItemStack item);
 
     boolean checkType(String typeName);
+
+    ItemStack getPreviewItem();
 }

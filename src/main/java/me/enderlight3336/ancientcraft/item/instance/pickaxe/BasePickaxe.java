@@ -1,16 +1,16 @@
-package me.enderlight3336.ancientcraft.item.instance.sword;
+package me.enderlight3336.ancientcraft.item.instance.pickaxe;
 
 import com.alibaba.fastjson2.JSONObject;
 import me.enderlight3336.ancientcraft.item.data.CommonData;
 import me.enderlight3336.ancientcraft.item.instance.DataItem;
+import me.enderlight3336.ancientcraft.item.instance.type.IPickaxe;
 import me.enderlight3336.ancientcraft.item.instance.type.ItemLevelAndPartable;
-import me.enderlight3336.ancientcraft.item.instance.type.ISword;
 import me.enderlight3336.ancientcraft.util.AsyncDataSaver;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class ShortSword extends DataItem<CommonData> implements ItemLevelAndPartable<CommonData>, ISword {
-    public ShortSword(JSONObject json) {
+public class BasePickaxe extends DataItem<CommonData> implements ItemLevelAndPartable<CommonData>, IPickaxe {
+    public BasePickaxe(JSONObject json) {
         super(json);
     }
 
@@ -23,11 +23,5 @@ public class ShortSword extends DataItem<CommonData> implements ItemLevelAndPart
     @Override
     public @NotNull CommonData readData(JSONObject json) {
         return new CommonData(json);
-    }
-
-
-    @Override
-    public boolean checkType(String typeName) {
-        return typeName.equals("sword") || super.checkType(typeName);
     }
 }

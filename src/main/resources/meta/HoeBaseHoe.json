@@ -1,0 +1,13 @@
+{
+    "id" : "base_hoe",
+    "name" : "量子锄",
+    "material" : "DIAMOND_HOE",
+    "lore" : [
+        "§q test"
+    ],
+    "baseEnchantments" : {
+        "fortune" : 7,
+        "efficiency" : 10
+    },
+    "durability" : 100000
+}

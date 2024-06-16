@@ -7,5 +7,6 @@ import me.enderlight3336.ancientcraft.item.data.LevelAndPartData;
  *
  * @param <T> Target data
  */
-public interface ItemLevelAndPartble<T extends LevelAndPartData> extends ItemDatable<T> {
+public interface ItemLevelAndPartable<T extends LevelAndPartData> extends ItemDatable<T> {
+
 }

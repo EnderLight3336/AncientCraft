@@ -1,11 +1,10 @@
 package me.enderlight3336.ancientcraft.item.instance.part;
 
-import me.enderlight3336.ancientcraft.listener.acceptor.EventAcceptor;
 import org.bukkit.event.Event;
 
 public interface PartEventAcceptor<T extends Event> {
     /**
-     * Shouldn't call this method direct, call {@link EventAcceptor#accept(Event)} instantly
+     * Shouldn't call this method direct, call {@link PartEventAcceptor#accept(Event, int)} instantly
      */
     void execute(T event, int partLevel);
 

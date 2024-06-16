@@ -30,14 +30,15 @@ public final class MultipleBlockManager {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static boolean onInteract(PlayerInteractEvent event) {
         Block clicked = event.getClickedBlock();
         List<MultipleBlock<?>> list = mb.get(clicked.getType());
         if (list != null) {
-            for (MultipleBlock<? extends MultipleBlock.ICheckResult> multipleBlock : list) {
+            for (MultipleBlock multipleBlock : list) {
                 MultipleBlock.ICheckResult result = multipleBlock.check(clicked);
                 if (result.getValue()) {
-                    //multipleBlock.execute(event, result);
+                    multipleBlock.execute(event, result);
                     return true;
                 }
             }

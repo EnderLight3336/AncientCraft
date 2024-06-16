@@ -1,0 +1,33 @@
+{
+    "id" : "spicy_strip",
+    "name" : "辣条",
+    "material" : "rotten_flesh",
+    "lore" : ["十分可口"],
+    "baseEnchantments" : {
+        "unbreaking" : 1
+    },
+    "food" : {
+        "canAlwaysEat" : true,
+        "eatSeconds" : 2.00,
+        "nutrition" : 5,
+        "saturation" : 2,
+        "effect" : [
+            {
+                "chance" : 1.0000,
+                "type" : "strength",
+                "time" : 300,
+                "level" : 4
+            }
+        ]
+    },
+    "recipes" : {
+        "shapelessCraft" : [
+            {
+                "resultAmount" : 1,
+                "recipe" : [
+                    "sugar", "rotten_flesh"
+                ]
+            }
+        ]
+    }
+}

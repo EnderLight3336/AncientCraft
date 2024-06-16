@@ -3,7 +3,7 @@ package me.enderlight3336.ancientcraft.listener;
 import me.enderlight3336.ancientcraft.item.ItemManager;
 import me.enderlight3336.ancientcraft.item.instance.ItemInstance;
 import me.enderlight3336.ancientcraft.item.instance.part.base.BasePart;
-import me.enderlight3336.ancientcraft.item.instance.type.ItemLevelAndPartble;
+import me.enderlight3336.ancientcraft.item.instance.type.ItemLevelAndPartable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -19,8 +19,8 @@ public final class ItemProtectListener implements Listener {
         ItemStack[] inv = event.getInventory().getContents();
         ItemInstance i1 = ItemManager.getItemInstance(inv[0]);
         ItemInstance i2 = ItemManager.getItemInstance(inv[1]);
-        if(i1 != null) {
-            if (i1 instanceof ItemLevelAndPartble<?> && i2 instanceof BasePart) {
+        if (i1 != null) {
+            if (i1 instanceof ItemLevelAndPartable<?> && i2 instanceof BasePart) {
                 //
             } else {
                 event.setResult(null);
@@ -45,9 +45,12 @@ public final class ItemProtectListener implements Listener {
                 if (ItemManager.isACItem(item)) {
                     if (event.isRepair()) {
                         event.getInventory().setResult(null);
+                        return;
                     } else if (event.getRecipe() instanceof CraftingRecipe recipe) {
-                        if (!recipe.getKey().getNamespace().equals("ancientcraft"))
+                        if (!recipe.getKey().getNamespace().equals("ancientcraft")) {
                             event.getInventory().setResult(null);
+                            return;
+                        }
                     }
                 }
             }

@@ -10,7 +10,7 @@ import me.enderlight3336.ancientcraft.multiple.MultipleBlockManager;
 import me.enderlight3336.ancientcraft.recipe.RecipeManager;
 import me.enderlight3336.ancientcraft.util.*;
 import org.bukkit.Bukkit;
-import org.bukkit.Keyed;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -18,7 +18,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Recipe;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -27,8 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public final class AncientCraft extends JavaPlugin {
     private static AncientCraft instance;
@@ -56,7 +55,6 @@ public final class AncientCraft extends JavaPlugin {
         ItemManager.init();
         MultipleBlockManager.init();
         RecipeManager.recipeManager.init();
-        RecipeManager.recipeManager = null;
 
         getServer().getPluginManager().registerEvents(new DummyListener(), instance);
         getServer().getPluginManager().registerEvents(new EntityListener(), instance);
@@ -65,6 +63,7 @@ public final class AncientCraft extends JavaPlugin {
 
         new AsyncDataSaver().runTaskTimerAsynchronously(instance, 6000L, 6000L);
         new AsyncLoreBuilder().runTaskTimerAsynchronously(instance, 10L, 10L);
+        new SyncBlockChangeTask().runTaskTimer(instance, 2L, 2L);
 
         getLogger().info("================AncientCraft================");
         getLogger().info("       version: " + getVersion());
@@ -184,17 +183,12 @@ public final class AncientCraft extends JavaPlugin {
                             AsyncDataSaver.execute();
                             AsyncLoreBuilder.execute();
 
-                            Iterator<Recipe> iterator = Bukkit.recipeIterator();
-                            List<Keyed> recipes = new ArrayList<>();
-                            while (iterator.hasNext()) {
-                                Recipe recipe = iterator.next();
-                                if (recipe instanceof Keyed && ((Keyed) recipe).getKey().getNamespace().equals("ancientcraft"))
-                                    recipes.add((Keyed) recipe);
-                            }
-                            recipes.forEach(recipe -> Bukkit.removeRecipe(recipe.getKey()));
+                            Map<String, List<NamespacedKey>> map = RecipeManager.getRecipeKeyMap();
+                            map.forEach((str, list) -> list.forEach(Bukkit::removeRecipe));
+                            map.clear();
 
                             RecipeManager.recipeManager = new RecipeManager();
-                            ConfigInstance.getExpMap().clear();
+                            ConfigInstance.getSwordExpMap().clear();
                             FileUtil.init();
                             ItemManager.reload();
                             MultipleBlockManager.reload();

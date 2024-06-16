@@ -21,6 +21,7 @@ public abstract class BasePart extends ItemInstance {
     }
 
     /**
+     * This method only modifies target item's status like attribute or enchantment
      * @throws IndexOutOfBoundsException If you don't check part's max level
      */
     protected abstract void unsafeApply(ItemStack target, int currentPartLevel);

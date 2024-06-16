@@ -3,12 +3,10 @@ package me.enderlight3336.ancientcraft.item.instance;
 import com.alibaba.fastjson2.JSONObject;
 import me.enderlight3336.ancientcraft.item.data.ItemData;
 import me.enderlight3336.ancientcraft.item.instance.type.ItemDatable;
-import me.enderlight3336.ancientcraft.util.AsyncDataSaver;
-import me.enderlight3336.ancientcraft.util.DataList;
-import me.enderlight3336.ancientcraft.util.FileUtil;
-import me.enderlight3336.ancientcraft.util.ItemUtil;
+import me.enderlight3336.ancientcraft.util.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -45,6 +43,15 @@ public abstract class DataItem<T extends ItemData> extends ItemInstance implemen
         ItemUtil.setDataId(im, entry.getIndex());
         item.setItemMeta(im);
         AsyncDataSaver.pub(getId(), entry);
+        return item;
+    }
+
+    @Override
+    public ItemStack getPreviewItem() {
+        ItemStack item = originItem.clone();
+        ItemMeta im = item.getItemMeta();
+        im.getPersistentDataContainer().set(KeyManager.getPreviewItemKey(), PersistentDataType.STRING, id);
+        item.setItemMeta(im);
         return item;
     }
 

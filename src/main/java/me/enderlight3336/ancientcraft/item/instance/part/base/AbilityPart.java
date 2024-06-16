@@ -8,20 +8,25 @@ import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbilityPart<T extends Event> extends BasePart implements PartEventAcceptor<T> {
+import java.util.Map;
+
+public abstract class AbilityPart extends BasePart {
     public AbilityPart(JSONObject object) {
         super(object);
     }
 
 
     @Override
-    public <Ty extends LevelAndPartData> ApplyResult apply(@NotNull Ty data, ItemDatable<?> instance, ItemStack target) {
+    public <D extends LevelAndPartData> ApplyResult apply(@NotNull D data, ItemDatable<?> instance, ItemStack target) {
         ApplyResult result = super.apply(data, instance, target);
         if (result == ApplyResult.SUCCESS) {
-            data.registerEventPart(this);
+            data.registerEventPart(getEventHandlers());
         }
         return result;
     }
 
-    public abstract String[] getListenedEventNames();
+    @Override
+    protected void unsafeApply(ItemStack target, int currentPartLevel) {}
+
+    public abstract Map<String, PartEventAcceptor<?>> getEventHandlers();
 }

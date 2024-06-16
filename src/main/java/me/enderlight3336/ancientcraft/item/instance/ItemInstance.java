@@ -7,22 +7,27 @@ import me.enderlight3336.ancientcraft.loot.CustomLootTableManager;
 import me.enderlight3336.ancientcraft.recipe.RecipeManager;
 import me.enderlight3336.ancientcraft.util.ConfigInstance;
 import me.enderlight3336.ancientcraft.util.ItemUtil;
-import me.enderlight3336.ancientcraft.util.KeyManager;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.*;
+import org.bukkit.event.Event;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.components.FoodComponent;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class ItemInstance {
     protected final String id;
@@ -51,6 +56,9 @@ public class ItemInstance {
     }
 
     public ItemInstance(JSONObject itemInfo) {
+        if (itemInfo.containsKey("food") && itemInfo.containsKey("potionInfo"))
+            throw new IllegalStateException("Invalid json! An item cannot be a food while have potionInfo" + itemInfo);
+
         if (ConfigInstance.isBeta()) {
             this.id = "beta_" + itemInfo.getString("id");
         } else {
@@ -68,8 +76,11 @@ public class ItemInstance {
 
         if (itemInfo.containsKey("baseAttributes")) {
             JSONObject attributes = itemInfo.getJSONObject("baseAttributes");
-            attributes.forEach((str, o) -> im.addAttributeModifier(Attribute.valueOf(str.toUpperCase()),
-                    new AttributeModifier("ancientcraft", Double.parseDouble(o.toString()), AttributeModifier.Operation.ADD_NUMBER)));
+            attributes.keySet().forEach(s -> {
+                Attribute a = Attribute.valueOf(s.toLowerCase(Locale.ROOT));
+                im.addAttributeModifier(a,
+                        new AttributeModifier("ancientcraft", ItemUtil.handleAttribute(a, this.material, attributes.getDoubleValue(s)), AttributeModifier.Operation.ADD_NUMBER));
+            });
         }
 
         if (im instanceof Damageable && itemInfo.containsKey("durability")) {
@@ -104,22 +115,24 @@ public class ItemInstance {
             }
         }
 
-        if (itemInfo.containsKey("foodInfo")) {
-            FoodComponent food = im.getFood();
-            JSONObject foodInfo = itemInfo.getJSONObject("foodInfo");
-            food.setCanAlwaysEat(foodInfo.getBooleanValue("canAlwaysEat"));
-            food.setEatSeconds(foodInfo.getFloatValue("eatSeconds"));
-            food.setNutrition(foodInfo.getIntValue("nutrition"));
-            food.setSaturation(foodInfo.getFloatValue("saturation"));
+        if (itemInfo.containsKey("food")) {
+            FoodComponent foodComponent = im.getFood();
+            JSONObject foodInfo = itemInfo.getJSONObject("food");
+            foodComponent.setCanAlwaysEat(foodInfo.getBooleanValue("canAlwaysEat"));
+            foodComponent.setEatSeconds(foodInfo.getFloatValue("eatSeconds"));
+            foodComponent.setNutrition(foodInfo.getIntValue("nutrition"));
+            foodComponent.setSaturation(foodInfo.getFloatValue("saturation"));
             if (foodInfo.containsKey("effect")) {
                 JSONArray effect = foodInfo.getJSONArray("effect");
-                int index = 0;
-                while (index < effect.size()) {
+                for (int index = 0; index < effect.size(); index++) {
                     JSONObject e = effect.getJSONObject(index);
-                    index++;
-                    foodInfo.addEffect()
+                    foodComponent.addEffect(new PotionEffect(Registry.EFFECT.get(NamespacedKey.minecraft(e.getString("type").toLowerCase(Locale.ROOT))), e.getIntValue("time") * 20, e.getIntValue("level")),
+                            e.getFloatValue("chance"));
                 }
             }
+            im.setFood(foodComponent);
+        } else if (im.hasFood()) {
+            im.setFood(null);
         }
 
         im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
@@ -179,5 +192,15 @@ public class ItemInstance {
 
     public boolean checkType(String typeName) {
         return typeName.equals("item");
+    }
+
+    @Override
+    public final int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public final boolean equals(Object obj) {
+        return (obj instanceof ItemInstance) && ((ItemInstance) obj).id.equals(this.id);
     }
 }

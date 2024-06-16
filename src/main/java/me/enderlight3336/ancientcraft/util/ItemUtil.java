@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class ItemUtil {
-    public static double handleAttribute(double base, Material material, Attribute attribute) {
+    public static double handleAttribute( Attribute attribute, Material material, double base) {
         switch (attribute) {
             case GENERIC_ARMOR -> {
                 switch (material) {

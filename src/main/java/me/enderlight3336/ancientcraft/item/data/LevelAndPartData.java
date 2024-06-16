@@ -1,10 +1,12 @@
 package me.enderlight3336.ancientcraft.item.data;
 
 import me.enderlight3336.ancientcraft.item.instance.ItemInstance;
+import me.enderlight3336.ancientcraft.item.instance.part.PartEventAcceptor;
 import me.enderlight3336.ancientcraft.item.instance.part.base.AbilityPart;
 import org.bukkit.event.Event;
 
 import java.util.List;
+import java.util.Map;
 
 public interface LevelAndPartData extends ItemData {
 
@@ -22,6 +24,10 @@ public interface LevelAndPartData extends ItemData {
 
     void setLevel(int i);
 
+    /**
+     * @param i how many exp will add to this item
+     * @return -1 means not level up, other means level up and return targetLevel
+     */
     int addExp(int i);
 
     int getExp();
@@ -36,5 +42,5 @@ public interface LevelAndPartData extends ItemData {
 
     void acceptEvent(Event event, ItemInstance itemInMainHand);
 
-    void registerEventPart(AbilityPart<?> part);
+    void registerEventPart(Map<String, PartEventAcceptor<?>> map);
 }

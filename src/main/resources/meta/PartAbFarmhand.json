@@ -1,0 +1,9 @@
+{
+    "id" : "part_farmhand",
+    "name" : "农夫之手模块",
+    "material" : "GOLDEN_HOE",
+    "lore" : ["3*3农作物采集效果", "能力模块"],
+    "partName" : "农夫之手",
+    "costSlot" : 1,
+    "applyType" : ["hoe"]
+  }

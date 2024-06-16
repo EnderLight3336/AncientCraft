@@ -20,7 +20,7 @@ public final class MultipleUpgradeBlock extends MultipleBlock<MultipleBlock.Chec
     }
 
     @Override
-    public void execute(PlayerInteractEvent event, MultipleBlock.CheckResult ignore) {
+    public void execute(PlayerInteractEvent event, CheckResult result) {
         Dropper dropper = (Dropper) event.getClickedBlock().getRelative(BlockFace.DOWN).getState();
         ItemStack partItem = null;
         BasePart part = null;
@@ -29,20 +29,18 @@ public final class MultipleUpgradeBlock extends MultipleBlock<MultipleBlock.Chec
 
         for (ItemStack item : dropper.getInventory().getStorageContents()) {
             if (item != null) {
-                if (item.getItemMeta() != null) {
-                    ItemInstance instance = ItemManager.getItemInstance(item);
-                    if (instance != null) {
-                        if (instance instanceof BasePart &&
-                                part == null) {
-                            //find part that need apply
-                            part = (BasePart) instance;
-                            partItem = item;
-                        } else if (instance instanceof ItemDatable<?> &&
-                                targetItemInstance == null) {
-                            //find item that will be applied
-                            targetItemInstance = (ItemDatable<?>) instance;
-                            itemWillBeApply = item;
-                        }
+                ItemInstance instance = ItemManager.getItemInstance(item);
+                if (instance != null) {
+                    if (instance instanceof BasePart &&
+                            part == null) {
+                        //find part that need apply
+                        part = (BasePart) instance;
+                        partItem = item;
+                    } else if (instance instanceof ItemDatable<?> &&
+                            targetItemInstance == null) {
+                        //find item that will be applied
+                        targetItemInstance = (ItemDatable<?>) instance;
+                        itemWillBeApply = item;
                     }
                 }
             }
@@ -54,12 +52,12 @@ public final class MultipleUpgradeBlock extends MultipleBlock<MultipleBlock.Chec
             ItemDatable<?> finalTargetItemInstance = targetItemInstance;
 
             targetItemInstance.modifyItemData(itemWillBeApply, data -> {
-                BasePart.ApplyResult result = finalPart.apply((LevelAndPartData) data, finalTargetItemInstance, finalItemWillBeApply);
-                if (result == BasePart.ApplyResult.SUCCESS) {
+                BasePart.ApplyResult result1 = finalPart.apply((LevelAndPartData) data, finalTargetItemInstance, finalItemWillBeApply);
+                if (result1 == BasePart.ApplyResult.SUCCESS) {
                     finalPartItem.setAmount(finalPartItem.getAmount() - 1);
                     AsyncLoreBuilder.addPartBuildTask(finalItemWillBeApply, (LevelAndPartData) data);
                 }
-                event.getPlayer().sendMessage(result.getMessage());
+                event.getPlayer().sendMessage(result1.getMessage());
             });
         } else {
             event.getPlayer().sendMessage("操作失败!");

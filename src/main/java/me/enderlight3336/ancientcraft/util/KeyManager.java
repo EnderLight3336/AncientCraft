@@ -7,6 +7,7 @@ public final class KeyManager {
     private static final NamespacedKey idKey = new NamespacedKey(AncientCraft.getInstance(), "ac_id");
     private static final NamespacedKey dataIdKey = new NamespacedKey(AncientCraft.getInstance(), "ac_dataid");
     private static final NamespacedKey starKey = new NamespacedKey(AncientCraft.getInstance(), "ac_star");
+    private static final NamespacedKey previewItemKey = new NamespacedKey(AncientCraft.getInstance(), "preview_item");
 
     public static NamespacedKey getIdKey() {
         return idKey;
@@ -18,6 +19,10 @@ public final class KeyManager {
 
     public static NamespacedKey getStarKey() {
         return starKey;
+    }
+
+    public static NamespacedKey getPreviewItemKey() {
+        return previewItemKey;
     }
 
     public static NamespacedKey genRecipeKey(String type, int index, String id) {

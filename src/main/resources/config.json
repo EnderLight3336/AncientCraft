@@ -20,5 +20,20 @@
     "level" : [100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200, 102400, 204800, 409600, 819200],
     "beta" : false,
     "slotPerLevel" : 2,
-    "swordExp" : {}
+    "swordExp" : {
+        "default" : 1,
+        "ender_dragon" : 1500,
+        "wither" : 2000,
+        "zombie" : 5,
+        "spider" : 5,
+        "skeleton" : 5,
+        "creeper" : 5
+    },
+    "pickaxeExp" : {
+        "diamond_ore" : 10
+    },
+    "hoeExp" : {
+        "wheat" : 1,
+        "potato" : 1
+    }
 }

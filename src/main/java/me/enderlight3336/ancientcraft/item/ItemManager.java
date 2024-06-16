@@ -3,6 +3,8 @@ package me.enderlight3336.ancientcraft.item;
 import me.enderlight3336.ancientcraft.AncientCraft;
 import me.enderlight3336.ancientcraft.item.data.ItemData;
 import me.enderlight3336.ancientcraft.item.instance.ItemInstance;
+import me.enderlight3336.ancientcraft.item.instance.hoe.BaseHoe;
+import me.enderlight3336.ancientcraft.item.instance.part.PartFarmhand;
 import me.enderlight3336.ancientcraft.item.instance.part.PartSuckBlood;
 import me.enderlight3336.ancientcraft.item.instance.part.base.AttributePart;
 import me.enderlight3336.ancientcraft.item.instance.part.base.EnchantmentPart;
@@ -15,6 +17,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,18 +25,6 @@ import java.util.function.Consumer;
 
 public final class ItemManager {
     private static final Map<String, ItemInstance> registeredItem = new HashMap<>();
-    private static final Map<String, DataList<?>> data = new HashMap<>();
-
-    public static void addAttribute(ItemStack item, Attribute attribute, double amount) {
-        try {
-            ItemMeta im = item.getItemMeta();
-            im.addAttributeModifier(attribute,
-                    new AttributeModifier("ac_internal", amount, AttributeModifier.Operation.ADD_NUMBER));
-            item.setItemMeta(im);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public static ItemStack createItem(String id) {
         return registeredItem.get(id).createItem();
@@ -59,12 +50,17 @@ public final class ItemManager {
         return registeredItem.containsKey(id);
     }
 
-    public static ItemInstance getById(String id) {
+    public static ItemInstance getById(@Nullable String id) {
+        if (id == null)
+            return null;
         return registeredItem.get(id);
     }
 
+    @Nullable
     public static ItemInstance getItemInstance(ItemStack item) {
-        return registeredItem.get(ItemUtil.getId(item.getItemMeta()));
+        if (item.hasItemMeta())
+            return registeredItem.get(ItemUtil.getId(item.getItemMeta()));
+        return null;
     }
 
     public static void modifyItemData(ItemStack target, ItemDatable<?> itemInstance, Consumer<ItemData> consumer) {
@@ -86,9 +82,11 @@ public final class ItemManager {
         new ItemInstance(FileUtil.getJSON("/meta/ItemRefinedDiamond.json"));
         new ItemInstance(FileUtil.getJSON("/meta/ItemRefinedGold.json"));
         new ItemInstance(FileUtil.getJSON("/meta/ItemRefinedIron.json"));
+        new ItemInstance(FileUtil.getJSON("/meta/ItemSpicyStrip.json"));
         //part must load before other items
         //Because dataItem may try to find some part's instance
         new PartSuckBlood(FileUtil.getJSON("/meta/PartAbSuckBlood.json"));
+        new PartFarmhand(FileUtil.getJSON("/meta/PartAbFarmhand.json"));
         new AttributePart(FileUtil.getJSON("/meta/PartAtHealth.json"));
         new AttributePart(FileUtil.getJSON("/meta/PartAtJump.json"));
         new AttributePart(FileUtil.getJSON("/meta/PartAtPlayerblockrange.json"));
@@ -101,6 +99,7 @@ public final class ItemManager {
         new EnchantmentPart(FileUtil.getJSON("/meta/PartEnRespiration.json"));
         new EnchantmentPart(FileUtil.getJSON("/meta/PartEnSharpness.json"));
         //then load other items
+        new BaseHoe(FileUtil.getJSON("/meta/HoeBaseHoe.json"));
         new DragonSword(FileUtil.getJSON("/meta/SwordDragonSword.json"));
         new HeavySword(FileUtil.getJSON("/meta/SwordHeavySword.json"));
         new LongSword(FileUtil.getJSON("/meta/SwordLongSword.json"));

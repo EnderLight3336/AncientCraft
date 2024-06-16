@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class CommonData implements ItemData, LevelAndPartData {
     protected final List<String> lore = new ArrayList<>();
@@ -21,6 +22,7 @@ public class CommonData implements ItemData, LevelAndPartData {
     protected final Map<String, List<PartEventAcceptor<?>>> eventPart = new HashMap<>();
     protected int exp;
     protected int level;
+    protected ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
 
     {
         lore.add("模块:");
@@ -42,27 +44,27 @@ public class CommonData implements ItemData, LevelAndPartData {
         parts.forEach((s, integer) -> {
             ItemInstance instance = ItemManager.getById(s);
             if (instance != null) {
-                if (instance instanceof AbilityPart<?>) {
-                    registerEventPart((AbilityPart<?>) instance);
+                if (instance instanceof AbilityPart) {
+                    registerEventPart(((AbilityPart) instance).getEventHandlers());
                 }
             }
         });
     }
 
     @Override
-    public void registerEventPart(AbilityPart<?> part) {
-        for (String s : part.getListenedEventNames()) {
-            List<PartEventAcceptor<?>> list = eventPart.get(s);
+    public void registerEventPart(Map<String, PartEventAcceptor<?>> map) {
+        map.forEach((str, acceptor) -> {
+            List<PartEventAcceptor<?>> list = eventPart.get(str);
             if (list != null) {
-                if (!list.contains(part)) {
-                    list.add(part);
+                if (!list.contains(acceptor)) {
+                    list.add(acceptor);
                 }
             } else {
                 list = new ArrayList<>();
-                list.add(part);
-                eventPart.put(s, list);
+                list.add(acceptor);
+                eventPart.put(str, list);
             }
-        }
+        });
     }
 
     @Override
@@ -126,10 +128,6 @@ public class CommonData implements ItemData, LevelAndPartData {
         return def;
     }
 
-    /**
-     * @param i how many exp will add to this item
-     * @return -1 means not level up, other means level up and return targetLevel
-     */
     @Override
     public int addExp(int i) {
         this.exp = this.exp + i;

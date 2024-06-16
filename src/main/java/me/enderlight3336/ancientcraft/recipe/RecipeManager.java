@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONObject;
 import me.enderlight3336.ancientcraft.AncientCraft;
 import me.enderlight3336.ancientcraft.item.ItemManager;
 import me.enderlight3336.ancientcraft.item.instance.ItemInstance;
+import me.enderlight3336.ancientcraft.item.instance.type.ItemDatable;
 import me.enderlight3336.ancientcraft.util.KeyManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -15,88 +16,114 @@ import java.util.*;
 
 public final class RecipeManager {
     private final List<Entry> unhandled = new ArrayList<>();
-    private static final Map<String, List<NamespacedKey>> recipeKey = new HashMap<>();
+    private static final Map<String, List<NamespacedKey>> recipeKeyMap = new HashMap<>();
+    public static RecipeManager recipeManager = new RecipeManager();
+
     public void init() {
         for (Entry entry : unhandled) {
-            JSONObject recipes = entry.json;
-            List<NamespacedKey> keyList = recipeKey.computeIfAbsent(entry.instance.getId(), k -> new ArrayList<>());
-            if (recipes.containsKey("furnace")) {
-                JSONArray array = recipes.getJSONArray("furnace");
+            JSONObject recipeJSON = entry.json;
+            ItemInstance instance = entry.instance;
+            List<NamespacedKey> keyList = recipeKeyMap.computeIfAbsent(instance.getId(), k -> new ArrayList<>());
+            if (recipeJSON.containsKey("furnace")) {
+                JSONArray array = recipeJSON.getJSONArray("furnace");
                 int index = 0;
                 while (index < array.size()) {
                     JSONObject recipeDesc = array.getJSONObject(index);
                     index++;
-                    NamespacedKey key = KeyManager.genRecipeKey("furnace", index, entry.instance.getId());
+                    NamespacedKey key = KeyManager.genRecipeKey("furnace", index, instance.getId());
                     keyList.add(key);
                     Bukkit.addRecipe(new FurnaceRecipe(key,
-                            entry.instance.createItem(recipeDesc.getIntValue("resultAmount")),
+                            instance instanceof ItemDatable<?> ?
+                                    ((ItemDatable<?>) instance).getPreviewItem() :
+                                    instance.createItem(recipeDesc.getIntValue("resultAmount")),
                             Material.valueOf(recipeDesc.getString("input").toUpperCase(Locale.ROOT)),
                             recipeDesc.getFloatValue("exp"),
                             recipeDesc.getIntValue("cookingTime")
                     ));
                 }
-            } else if (recipes.containsKey("shapedCraft")) {
-                JSONArray array = recipes.getJSONArray("shapedCraft");
+            } else if (recipeJSON.containsKey("shapedCraft")) {
+                JSONArray array = recipeJSON.getJSONArray("shapedCraft");
                 int index = 0;
                 while (index < array.size()) {
                     JSONObject recipeDesc = array.getJSONObject(index);
                     index++;
-                    NamespacedKey key = KeyManager.genRecipeKey("shapedCraft", index, entry.instance.getId());
+                    NamespacedKey key = KeyManager.genRecipeKey("shapedCraft", index, instance.getId());
                     keyList.add(key);
                     ShapedRecipe sr = new ShapedRecipe(key,
-                            entry.instance.createItem(recipeDesc.getIntValue("resultAmount")))
-                                .shape(recipeDesc.getJSONArray("sharp").toArray(String.class));
-                    int index1 = 1;
-                    if (recipeDesc.containKey("a")) sr.setIngredient('a', new RecipeChoice.ExtraChoice(handleItems(recipeDesc.getString("a"))));
-                    if (recipeDesc.containKey("b")) sr.setIngredient('b', new RecipeChoice.ExtraChoice(handleItems(recipeDesc.getString("b"))));
-                    if (recipeDesc.containKey("c")) sr.setIngredient('c', new RecipeChoice.ExtraChoice(handleItems(recipeDesc.getString("c"))));
-                    if (recipeDesc.containKey("d")) sr.setIngredient('d', new RecipeChoice.ExtraChoice(handleItems(recipeDesc.getString("d"))));
-                    if (recipeDesc.containKey("e")) sr.setIngredient('e', new RecipeChoice.ExtraChoice(handleItems(recipeDesc.getString("e"))));
-                    if (recipeDesc.containKey("f")) sr.setIngredient('f', new RecipeChoice.ExtraChoice(handleItems(recipeDesc.getString("f"))));
-                    if (recipeDesc.containKey("g")) sr.setIngredient('g', new RecipeChoice.ExtraChoice(handleItems(recipeDesc.getString("g"))));
-                    if (recipeDesc.containKey("h")) sr.setIngredient('h', new RecipeChoice.ExtraChoice(handleItems(recipeDesc.getString("h"))));
-                    if (recipeDesc.containKey("i")) sr.setIngredient('i', new RecipeChoice.ExtraChoice(handleItems(recipeDesc.getString("i"))));
+                            instance instanceof ItemDatable ?
+                                    ((ItemDatable<?>) instance).getPreviewItem() :
+                                    instance.createItem(recipeDesc.getIntValue("resultAmount")))
+                            .shape(recipeDesc.getJSONArray("sharp").toArray(String.class));
+                    if (recipeDesc.containsKey("a"))
+                        sr.setIngredient('a', new RecipeChoice.ExactChoice(handleItems(recipeDesc.getJSONArray("a"))));
+                    if (recipeDesc.containsKey("b"))
+                        sr.setIngredient('b', new RecipeChoice.ExactChoice(handleItems(recipeDesc.getJSONArray("b"))));
+                    if (recipeDesc.containsKey("c"))
+                        sr.setIngredient('c', new RecipeChoice.ExactChoice(handleItems(recipeDesc.getJSONArray("c"))));
+                    if (recipeDesc.containsKey("d"))
+                        sr.setIngredient('d', new RecipeChoice.ExactChoice(handleItems(recipeDesc.getJSONArray("d"))));
+                    if (recipeDesc.containsKey("e"))
+                        sr.setIngredient('e', new RecipeChoice.ExactChoice(handleItems(recipeDesc.getJSONArray("e"))));
+                    if (recipeDesc.containsKey("f"))
+                        sr.setIngredient('f', new RecipeChoice.ExactChoice(handleItems(recipeDesc.getJSONArray("f"))));
+                    if (recipeDesc.containsKey("g"))
+                        sr.setIngredient('g', new RecipeChoice.ExactChoice(handleItems(recipeDesc.getJSONArray("g"))));
+                    if (recipeDesc.containsKey("h"))
+                        sr.setIngredient('h', new RecipeChoice.ExactChoice(handleItems(recipeDesc.getJSONArray("h"))));
+                    if (recipeDesc.containsKey("i"))
+                        sr.setIngredient('i', new RecipeChoice.ExactChoice(handleItems(recipeDesc.getJSONArray("i"))));
                     Bukkit.addRecipe(sr);
                 }
-            } else if (recipes.containsKey("shapelessCraft")) {
-                JSONArray array = recipes.getJSONArray("shapedCraft");
-                int index = 0;
-                while (index < array.size()) {
+            } else if (recipeJSON.containsKey("shapelessCraft")) {
+                JSONArray array = recipeJSON.getJSONArray("shapelessCraft");
+                for (int index = 0; index < array.size(); index++) {
                     JSONObject recipeDesc = array.getJSONObject(index);
-                    index++;
                     JSONArray recipe = recipeDesc.getJSONArray("recipe");
-                    if(recipe.size() < 10 && recipe.size() != 0) {
-                        NamespacedKey key = KeyManager.genRecipeKey("shapelessCraft", index, entry.instance.getId());
+                    if (recipe.size() < 10 && recipe.size() != 0) {
+                        NamespacedKey key = KeyManager.genRecipeKey("shapelessCraft", index, instance.getId());
                         keyList.add(key);
-                        ShapelessRecipe sr = new ShapelessRecipe(key, entry.instance.createItem(recipeDesc.getIntValue("resultAmount")));
-                        recipe.forEach(o -> sr.addIngredient(new RecipeChoice.ExactChoice(handleItem((String) o))));
+                        ShapelessRecipe sr = new ShapelessRecipe(key, instance instanceof ItemDatable ?
+                                ((ItemDatable<?>) instance).getPreviewItem() :
+                                instance.createItem(recipeDesc.getIntValue("resultAmount")));
+                        recipe.forEach(o -> sr.addIngredient(new RecipeChoice.ExactChoice(handleItems(o))));
                         Bukkit.addRecipe(sr);
-                    }
+                    } else AncientCraft.getInstance().getLogger().severe("Invalid file ! \n" + recipe);
                 }
             }
         }
+
+        recipeManager = null;
     }
+
     public void put(JSONObject jsonObject, ItemInstance instance) {
         unhandled.add(new Entry(instance, jsonObject));
     }
-    public static ItemStack handleItems(JSONArray array) {
-        ItemStack[] ret = new ItemStack[array.size()];
-        int index = 0;
-        while (index < array.size()) {
-            ret[index] = handleItem(array.get(index));
-            index++;
-        }
-        return ret;
+
+    public static List<ItemStack> handleItems(Object obj) {
+        if (obj instanceof JSONArray array) {
+            List<ItemStack> ret = new ArrayList<>(array.size());
+            for (int index = 0; index < array.size(); index++)
+                ret.add(handleItem(array.getString(index)));
+            return ret;
+        } else if (obj instanceof String str) {
+            return List.of(handleItem(str));
+        } else throw new IllegalArgumentException("Invalid arg! \n" + obj.toString());
     }
+
     public static ItemStack handleItem(String str) {
         return str.startsWith("ac:") ? ItemManager.getById(str.substring(3)).createItem() :
                 str.startsWith("ancientcraft:") ? ItemManager.getById(str.substring(13)).createItem() :
                         new ItemStack(Material.valueOf(str.toUpperCase(Locale.ROOT)));
     }
-    public static RecipeManager recipeManager = new RecipeManager();
+
+    public static Map<String, List<NamespacedKey>> getRecipeKeyMap() {
+        return recipeKeyMap;
+    }
+
     public static final class Entry {
         final ItemInstance instance;
         final JSONObject json;
+
         public Entry(ItemInstance instance, JSONObject json) {
             this.instance = instance;
             this.json = json;

@@ -14,7 +14,7 @@ public final class PartAutoCultivate extends AbilityPart {
         public void execute(BlockBreakEvent event, int partLevel) {
             if (event.getBlock().getBlockData() instanceof Ageable) {
                 SyncBlockChangeTask.put(event.getBlock(), event.getBlock().getType());
-            }
+            }//todo :need check
         }
 
         @Override

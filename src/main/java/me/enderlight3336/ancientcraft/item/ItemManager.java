@@ -83,6 +83,7 @@ public final class ItemManager {
         new ItemInstance(FileUtil.getJSON("/meta/ItemRefinedGold.json"));
         new ItemInstance(FileUtil.getJSON("/meta/ItemRefinedIron.json"));
         new ItemInstance(FileUtil.getJSON("/meta/ItemSpicyStrip.json"));
+        new ItemInstance(FileUtil.getJSON("/meta/ItemClimberHook.json"));
         //part must load before other items
         //Because dataItem may try to find some part's instance
         new PartSuckBlood(FileUtil.getJSON("/meta/PartAbSuckBlood.json"));

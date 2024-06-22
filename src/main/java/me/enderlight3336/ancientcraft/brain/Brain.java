@@ -13,32 +13,26 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.io.File;
 import java.util.UUID;
 
-public final class Brain {
+public final class Brain extends ACInventoryHolderImpl {
     public static final ItemStack BRAIN_ITEM = ItemUtil.createHead("");
     public static final ItemStack SACK_ITEM = ItemUtil.createHead("");
     private int level;
     private final Sack sack;
-    private final ACInventoryHolderImpl ui = new ACInventoryHolderImpl(new ItemStack[]{
-            null, null, null, null, null, null, null, null, null,
-            null, null, null, null, BRAIN_ITEM, null, null, null, null,
-            null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null,
-            null, SACK_ITEM, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null
-    }, new int[]{13, 37}, (event -> {
-        event.getWhoClicked().getInventory().getStorageContents()
-        return false;
-    }), event -> {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                event.getWhoClicked().openInventory();
-            }
-        }.runTaskLater(AncientCraft.getInstance(), 1L);
-        return false;
-    });
 
     public Brain(UUID uuid) {
+        super(54, new int[]{13, 37}, event -> {
+            event.getWhoClicked().getInventory().getStorageContents();
+            return false;
+        }, event -> {
+            new BukkitRunnable() {
+                @Override
+                public void run() {}
+            }.runTaskLater(AncientCraft.getInstance(), 1L);
+            return false;
+        });
+
+        inventory.setItem(13, BRAIN_ITEM);
+        inventory.setItem(37, SACK_ITEM);
         File brainFile = new File(FileUtil.PLAYER_DATA_FOLDER, uuid.toString());
         File sackFile = new File(FileUtil.SACK_DATA_FOLDER, uuid.toString());
         if (brainFile.exists()) {

@@ -12,10 +12,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public final class Sack {
+public final class Sack implements ACInventoryHolder {
     @ThreadSafe
     private final Object2IntOpenHashMap<Material> map;
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    private final Inventory inventory = Bukkit.createInventory(this, 54);
+    {
+        inventory.setItem(45, );
+        inventory.setItem(53, );
+    }
     public Sack() {
         map = new Object2IntOpenHashMap<>();
     }

@@ -7,27 +7,29 @@ import me.enderlight3336.ancientcraft.loot.CustomLootTableManager;
 import me.enderlight3336.ancientcraft.recipe.RecipeManager;
 import me.enderlight3336.ancientcraft.util.ConfigInstance;
 import me.enderlight3336.ancientcraft.util.ItemUtil;
-import org.bukkit.Color;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
+import me.enderlight3336.ancientcraft.util.KeyManager;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.inventory.meta.components.FoodComponent;
+import org.bukkit.inventory.meta.components.ToolComponent;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionType;
+import org.bukkit.profile.PlayerProfile;
+import org.bukkit.profile.PlayerTextures;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
 
 public class ItemInstance {
     protected final String id;
@@ -35,72 +37,65 @@ public class ItemInstance {
     protected final Material material;
     protected final List<String> lore = new ArrayList<>();
     protected final ItemStack originItem;
+    public static final UUID HEAD_UUID = UUID.fromString("570995BA-8733-604D-1A6D-0BDB1B6366B0");
 
-    public ItemInstance(String id, Material material, String name, List<String> lore) {
-        if (ConfigInstance.isBeta()) {
-            this.id = "beta_" + id;
-        } else {
-            this.id = id;
-        }
-        this.name = name;
-        this.material = material;
-
-        this.lore.addAll(lore);
-        this.originItem = new ItemStack(material);
-
-        ItemMeta im = originItem.getItemMeta();
-        im.setDisplayName(name);
-        im.setLore(this.lore);
-
-        originItem.setItemMeta(im);
-    }
-
-    public ItemInstance(JSONObject itemInfo) {
-        if (itemInfo.containsKey("food") && itemInfo.containsKey("potionInfo"))
-            throw new IllegalStateException("Invalid json! An item cannot be a food while have potionInfo" + itemInfo);
+    public ItemInstance(JSONObject itemJSON) {
+        if (itemJSON.containsKey("food") && itemJSON.containsKey("potionInfo"))
+            throw new IllegalStateException("Invalid json! An item cannot be a food while have potionInfo" + itemJSON);
 
         if (ConfigInstance.isBeta()) {
-            this.id = "beta_" + itemInfo.getString("id");
+            this.id = "beta_" + itemJSON.getString("id");
         } else {
-            this.id = itemInfo.getString("id");
+            this.id = itemJSON.getString("id");
         }
-        this.name = itemInfo.getString("name");
-        this.material = Material.valueOf(itemInfo.getString("material").toUpperCase(Locale.ROOT));
-        this.lore.addAll(itemInfo.getJSONArray("lore").toJavaList(String.class));
+        this.name = itemJSON.getString("name");
+        this.material = Material.valueOf(itemJSON.getString("material").toUpperCase(Locale.ROOT));
+        this.lore.addAll(itemJSON.getJSONArray("lore").toJavaList(String.class));
 
         originItem = new ItemStack(this.material);
         ItemMeta im = originItem.getItemMeta();
         im.setDisplayName(this.name);
-        ItemUtil.setId(im, id);
+        im.getPersistentDataContainer().set(KeyManager.getIdKey(), PersistentDataType.STRING, id);
         im.setLore(this.lore);
 
-        if (itemInfo.containsKey("baseAttributes")) {
-            JSONObject attributes = itemInfo.getJSONObject("baseAttributes");
-            attributes.keySet().forEach(s -> {
+        if (material == Material.PLAYER_HEAD && itemJSON.containsKey("texture")) {
+            PlayerProfile profile = Bukkit.createPlayerProfile(HEAD_UUID);
+            PlayerTextures textures = profile.getTextures();
+            try {
+                textures.setSkin(new URI("http://textures.minecraft.net/texture/" + itemJSON.getString("texture")).toURL());
+            } catch (URISyntaxException | MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+            ((SkullMeta) im).setOwnerProfile(profile);
+        }
+
+        if (itemJSON.containsKey("baseAttributes")) {
+            JSONObject attributeJSON = itemJSON.getJSONObject("baseAttributes");
+            attributeJSON.keySet().forEach(s -> {
                 Attribute a = Attribute.valueOf(s.toLowerCase(Locale.ROOT));
                 im.addAttributeModifier(a,
-                        new AttributeModifier("ancientcraft", ItemUtil.handleAttribute(a, this.material, attributes.getDoubleValue(s)), AttributeModifier.Operation.ADD_NUMBER));
+                        new AttributeModifier("ancientcraft", ItemUtil.handleAttribute(a, this.material, attributeJSON.getDoubleValue(s)), AttributeModifier.Operation.ADD_NUMBER));
             });
         }
 
-        if (im instanceof Damageable && itemInfo.containsKey("durability")) {
-            int damage = itemInfo.getIntValue("durability");
+        if (im instanceof Damageable && itemJSON.containsKey("durability")) {
+            int damage = itemJSON.getIntValue("durability");
             ((Damageable) im).setMaxDamage(damage);
         }
 
-        if (itemInfo.containsKey("baseEnchantments")) {
-            JSONObject enchantments = itemInfo.getJSONObject("baseEnchantments");
-            if (enchantments.size() == 1 && enchantments.containsKey("unbreaking")) {
+        if (itemJSON.containsKey("baseEnchantments")) {
+            JSONObject enchantmentJSON = itemJSON.getJSONObject("baseEnchantments");
+            if (enchantmentJSON.size() == 1 && enchantmentJSON.containsKey("unbreaking")) {
                 im.addEnchant(Enchantment.UNBREAKING, 1, true);
                 im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             } else {
-                enchantments.forEach((s, o) -> im.addEnchant(
+                enchantmentJSON.forEach((s, o) -> im.addEnchant(
                         Registry.ENCHANTMENT.get(NamespacedKey.minecraft(s.toLowerCase(Locale.ROOT))), Integer.parseInt(o.toString()), true));
             }
         }
 
-        if (itemInfo.containsKey("potionInfo")) {
-            JSONObject potion = itemInfo.getJSONObject("potionInfo");
+        if (itemJSON.containsKey("potionInfo")) {
+            JSONObject potion = itemJSON.getJSONObject("potionInfo");
             PotionMeta pm = (PotionMeta) im;
             pm.setBasePotionType(PotionType.valueOf(potion.getString("baseType").toUpperCase()));
             JSONObject color = potion.getJSONObject("color");
@@ -115,9 +110,9 @@ public class ItemInstance {
             }
         }
 
-        if (itemInfo.containsKey("food")) {
+        if (itemJSON.containsKey("food")) {
             FoodComponent foodComponent = im.getFood();
-            JSONObject foodInfo = itemInfo.getJSONObject("food");
+            JSONObject foodInfo = itemJSON.getJSONObject("food");
             foodComponent.setCanAlwaysEat(foodInfo.getBooleanValue("canAlwaysEat"));
             foodComponent.setEatSeconds(foodInfo.getFloatValue("eatSeconds"));
             foodComponent.setNutrition(foodInfo.getIntValue("nutrition"));
@@ -135,15 +130,29 @@ public class ItemInstance {
             im.setFood(null);
         }
 
+        if (itemJSON.containsKey("toolRule")) {
+            ToolComponent toolComponent = im.getTool();
+            JSONArray toolRule = itemJSON.getJSONArray("toolRule");
+            for (int index = 0; index < toolRule.size(); index++) {
+                JSONObject rule = toolRule.getJSONObject(index);
+                JSONArray blockStrArray = rule.getJSONArray("blocks");
+                List<Material> blockList = new ArrayList<>(blockStrArray.size());
+                for (int index1 = 0; index1 < blockStrArray.size(); index1++)
+                    blockList.add(Material.valueOf(blockStrArray.getString(index1).toUpperCase()));
+                toolComponent.addRule(blockList, rule.getFloat("speed"), rule.getBoolean("correctForDrops"));
+            }
+            im.setTool(toolComponent);
+        }
+
         im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         this.originItem.setItemMeta(im);
 
-        if (itemInfo.containsKey("recipes")) {
-            RecipeManager.recipeManager.put(itemInfo.getJSONObject("recipes"), this);
+        if (itemJSON.containsKey("recipes")) {
+            RecipeManager.recipeManager.put(itemJSON.getJSONObject("recipes"), this);
         }
 
-        if (itemInfo.containsKey("looting")) {
-            CustomLootTableManager.put(this, itemInfo.getJSONArray("looting"));
+        if (itemJSON.containsKey("looting")) {
+            CustomLootTableManager.put(this, itemJSON.getJSONArray("looting"));
         }
 
         ItemManager.regItem(this);

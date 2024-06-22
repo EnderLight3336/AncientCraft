@@ -22,6 +22,7 @@ public final class PartAutoCultivate extends AbilityPart {
             return id;
         }
     });
+
     public PartAutoCultivate(JSONObject object) {
         super(object);
     }

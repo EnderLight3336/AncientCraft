@@ -1,0 +1,20 @@
+{
+    "id" : "melon_knife",
+    "name" : "华强的西瓜刀",
+    "material" : "iron_sword",
+    "lore" : ["有一个人前来买瓜"],
+    "baseEnchantments" : {
+        "sharpness" : 5,
+        "looting" : 3,
+        "sweeping_edge" : 3,
+        "efficiency" : 10,
+        "fortune" : 5
+    },
+    "toolRule" : [
+        {
+            "blocks" : ["melon", "pumpkin"],
+            "speed" : 500.00,
+            "correctForDrops" : true
+        }
+    ]
+}

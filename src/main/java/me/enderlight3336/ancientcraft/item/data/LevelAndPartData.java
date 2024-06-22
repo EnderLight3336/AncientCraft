@@ -2,7 +2,6 @@ package me.enderlight3336.ancientcraft.item.data;
 
 import me.enderlight3336.ancientcraft.item.instance.ItemInstance;
 import me.enderlight3336.ancientcraft.item.instance.part.PartEventAcceptor;
-import me.enderlight3336.ancientcraft.item.instance.part.base.AbilityPart;
 import org.bukkit.event.Event;
 
 import java.util.List;

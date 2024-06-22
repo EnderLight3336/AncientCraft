@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import me.enderlight3336.ancientcraft.item.data.ItemData;
 import me.enderlight3336.ancientcraft.util.AsyncDataSaver;
 import me.enderlight3336.ancientcraft.util.DataList;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,5 +25,9 @@ public interface ItemDatable<T extends ItemData> {
 
     boolean checkType(String typeName);
 
+    /**
+     * @see me.enderlight3336.ancientcraft.listener.PlayerListener#onCraft(CraftItemEvent)
+     * @return An item without creating data
+     */
     ItemStack getPreviewItem();
 }

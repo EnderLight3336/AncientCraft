@@ -17,7 +17,7 @@ public abstract class DataItem<T extends ItemData> extends ItemInstance implemen
     public DataItem(JSONObject json) {
         super(json);
 
-        data = new DataList<>(FileUtil.getDataFolder(getId()), this::readData);
+        data = new DataList<>(FileUtil.getItemDataFolder(getId()), this::readData);
     }
 
     /**
@@ -40,9 +40,11 @@ public abstract class DataItem<T extends ItemData> extends ItemInstance implemen
         lore.addAll(entry.getData().buildLore());
         im.setLore(lore);
 
-        ItemUtil.setDataId(im, entry.getIndex());
+        //set data id
+        im.getPersistentDataContainer().set(KeyManager.getDataIdKey(), PersistentDataType.INTEGER, entry.getIndex());
+
         item.setItemMeta(im);
-        AsyncDataSaver.pub(getId(), entry);
+        AsyncDataSaver.putItemData(getId(), entry);
         return item;
     }
 

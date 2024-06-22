@@ -1,5 +1,6 @@
 {
     "id" : "climber_hook",
     "name" : "钩爪",
-    "material" : "fishing_hook"
+    "material" : "fishing_rod",
+    "lore" : ["让你飞天走地"]
 }

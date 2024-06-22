@@ -1,16 +1,24 @@
 package me.enderlight3336.ancientcraft.util;
 
+import me.enderlight3336.ancientcraft.item.instance.ItemInstance;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.profile.PlayerProfile;
+import org.bukkit.profile.PlayerTextures;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.UUID;
 
 public final class ItemUtil {
-    public static double handleAttribute( Attribute attribute, Material material, double base) {
+    public static double handleAttribute(Attribute attribute, Material material, double base) {
         switch (attribute) {
             case GENERIC_ARMOR -> {
                 switch (material) {
@@ -87,25 +95,8 @@ public final class ItemUtil {
         return base;
     }
 
-    @Nullable
-    public static String getId(@NotNull ItemMeta im) {
-        return im.getPersistentDataContainer().get(KeyManager.getIdKey(), PersistentDataType.STRING);
-    }
-
-    public static String getId(ItemStack item) {
-        return item.getItemMeta().getPersistentDataContainer().get(KeyManager.getIdKey(), PersistentDataType.STRING);
-    }
-
-    public static void setId(@NotNull PersistentDataHolder p, String id) {
-        p.getPersistentDataContainer().set(KeyManager.getIdKey(), PersistentDataType.STRING, id);
-    }
-
     public static boolean hasId(@NotNull PersistentDataHolder p) {
         return p.getPersistentDataContainer().has(KeyManager.getIdKey());
-    }
-
-    public static void setDataId(ItemMeta im, int i) {
-        im.getPersistentDataContainer().set(KeyManager.getDataIdKey(), PersistentDataType.INTEGER, i);
     }
 
     /**
@@ -114,5 +105,18 @@ public final class ItemUtil {
     public static int getDataId(ItemStack item) {
         Integer i = item.getItemMeta().getPersistentDataContainer().get(KeyManager.getDataIdKey(), PersistentDataType.INTEGER);
         return i != null ? i : -1;
+    }
+    public static ItemStack createHead(String base64) {
+        ItemStack item = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta im = (SkullMeta) item.getItemMeta();
+        PlayerProfile profile = Bukkit.createPlayerProfile(ItemInstance.HEAD_UUID);
+        PlayerTextures textures = profile.getTextures();
+        try {
+            textures.setSkin(new URI("http://textures.minecraft.net/texture/" + base64).toURL());
+        } catch (URISyntaxException | MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        im.setOwnerProfile(profile);
+        return item;
     }
 }

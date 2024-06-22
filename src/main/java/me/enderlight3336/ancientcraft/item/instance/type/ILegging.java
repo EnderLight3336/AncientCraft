@@ -1,4 +1,4 @@
 package me.enderlight3336.ancientcraft.item.instance.type;
 
-public interface ILegging extends IArmor{
+public interface ILegging extends IArmor {
 }

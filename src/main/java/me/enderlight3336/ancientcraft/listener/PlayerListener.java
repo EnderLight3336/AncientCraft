@@ -1,6 +1,9 @@
 package me.enderlight3336.ancientcraft.listener;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import me.enderlight3336.ancientcraft.AncientCraft;
+import me.enderlight3336.ancientcraft.brain.BrainManager;
 import me.enderlight3336.ancientcraft.item.ItemManager;
 import me.enderlight3336.ancientcraft.item.instance.ItemEventable;
 import me.enderlight3336.ancientcraft.item.instance.ItemInstance;
@@ -8,10 +11,11 @@ import me.enderlight3336.ancientcraft.item.instance.type.*;
 import me.enderlight3336.ancientcraft.multiple.MultipleBlockManager;
 import me.enderlight3336.ancientcraft.util.AsyncLoreBuilder;
 import me.enderlight3336.ancientcraft.util.ConfigInstance;
+import me.enderlight3336.ancientcraft.util.FileUtil;
 import me.enderlight3336.ancientcraft.util.KeyManager;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,13 +25,15 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.LazyMetadataValue;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.concurrent.Callable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.UUID;
 
 import static org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK;
 
@@ -103,9 +109,10 @@ public final class PlayerListener implements Listener {
         ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
         ItemInstance instance = ItemManager.getItemInstance(item);
         if (instance instanceof ItemLevelAndPartable<?>) {
+            Block block = event.getBlock();
             if (instance instanceof IPickaxe) {
-                if (!event.getBlock().hasMetadata("ac_place")) {
-                    int exp = ConfigInstance.getPickaxeExp(event.getBlock().getType());
+                if (!block.hasMetadata("ac_place")) {
+                    int exp = ConfigInstance.getPickaxeExp(block.getType());
                     if (exp == 0)
                         return;
                     ((ItemLevelAndPartable<?>) instance).modifyItemData(item, data -> {
@@ -118,10 +125,10 @@ public final class PlayerListener implements Listener {
                         }
                     });
                 }
-            } else if (instance instanceof IHoe) {
-                if (event.getBlock().getBlockData() instanceof Ageable ageable) {
+            } else if (instance instanceof IFarmTool) {
+                if (block.getBlockData() instanceof Ageable ageable) {
                     if (ageable.getAge() == ageable.getMaximumAge()) {
-                        int exp = ConfigInstance.getHoeExp(event.getBlock().getType());
+                        int exp = ConfigInstance.getHoeExp(block.getType());
                         if (exp == 0)
                             return;
                         ((ItemLevelAndPartable<?>) instance).modifyItemData(item, data -> {
@@ -134,6 +141,8 @@ public final class PlayerListener implements Listener {
                             }
                         });
                     }
+                } else if (block.getType() == Material.MELON || block.getType() == Material.PUMPKIN) {
+                    //todo
                 }
             }
         }
@@ -146,16 +155,44 @@ public final class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
         if (AncientCraft.isReload())
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "插件AncientCraft正在重载中");
+        else if (event.getLoginResult() == AsyncPlayerPreLoginEvent.Result.ALLOWED) {
+            BrainManager.load(event.getUniqueId());
+        }
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        BrainManager.unload(event.getPlayer().getUniqueId());
+    }
+
+    @EventHandler
+    public void onPlayerKick(PlayerKickEvent event) {
+        BrainManager.unload(event.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onCraft(CraftItemEvent event) {
         ItemInstance instance = ItemManager.getById(event.getInventory().getResult().getItemMeta().getPersistentDataContainer().get(KeyManager.getPreviewItemKey(), PersistentDataType.STRING));
-        if (instance instanceof ItemDatable<?>)
+        if (instance != null)
             event.getInventory().setResult(instance.createItem());
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onFish(PlayerFishEvent event) {
+        if (event.getState() == PlayerFishEvent.State.REEL_IN) {
+            ItemMeta meta;
+            if ((meta = event.getPlayer().getInventory().getItemInMainHand().getItemMeta()) != null) {
+                if ("climber_hook".equals(meta.getPersistentDataContainer().get(KeyManager.getIdKey(), PersistentDataType.STRING))) {
+                    if (event.getHook().getLocation().distance(event.getPlayer().getLocation()) >= 1) {
+                        event.getHook().setHookedEntity(event.getPlayer());
+                        event.getHook().pullHookedEntity();
+                    }
+                }
+            }
+        }
     }
 }

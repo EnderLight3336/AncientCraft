@@ -4,7 +4,6 @@ import com.alibaba.fastjson2.JSONObject;
 import me.enderlight3336.ancientcraft.item.instance.part.base.AbilityPart;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import java.util.Map;

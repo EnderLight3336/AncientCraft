@@ -1,6 +1,8 @@
 package me.enderlight3336.ancientcraft.item.data;
 
 import com.alibaba.fastjson2.JSONObject;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import me.enderlight3336.ancientcraft.item.ItemManager;
 import me.enderlight3336.ancientcraft.item.instance.ItemInstance;
 import me.enderlight3336.ancientcraft.item.instance.part.PartEventAcceptor;
@@ -14,15 +16,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class CommonData implements ItemData, LevelAndPartData {
     protected final List<String> lore = new ArrayList<>();
-    protected final Map<String, Integer> parts = new HashMap<>();
+    protected final Object2IntOpenHashMap<String> parts = new Object2IntOpenHashMap<>();
     protected final Map<String, List<PartEventAcceptor<?>>> eventPart = new HashMap<>();
     protected int exp;
     protected int level;
-    protected ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
 
     {
         lore.add("模块:");
@@ -40,7 +40,7 @@ public class CommonData implements ItemData, LevelAndPartData {
     public CommonData(@NotNull JSONObject json) {
         exp = json.getIntValue("exp");
         level = json.getIntValue("level");
-        json.getJSONObject("parts").forEach((s, o) -> parts.put(s, (Integer) o));
+        json.getJSONObject("parts").forEach((s, o) -> parts.put(s, Integer.parseInt(o.toString())));
         parts.forEach((s, integer) -> {
             ItemInstance instance = ItemManager.getById(s);
             if (instance != null) {
@@ -71,7 +71,7 @@ public class CommonData implements ItemData, LevelAndPartData {
     public void acceptEvent(Event event, ItemInstance itemInMainHand) {
         List<PartEventAcceptor<?>> list = eventPart.get(event.getEventName());
         if (list != null) {
-            list.forEach(eventAcceptor -> eventAcceptor.accept(event, parts.get(eventAcceptor.getId())));
+            list.forEach(eventAcceptor -> eventAcceptor.accept(event, parts.getInt(eventAcceptor.getId())));
         }
     }
 
@@ -123,8 +123,8 @@ public class CommonData implements ItemData, LevelAndPartData {
     @Override
     public int getFreeSlot() {
         int def = level * ConfigInstance.getSlotPerLevel();
-        for (Map.Entry<String, Integer> entry : parts.entrySet())
-            def = def - ((BasePart) ItemManager.getById(entry.getKey())).getCostSlot() * entry.getValue();
+        for (Object2IntMap.Entry<String> entry : parts.object2IntEntrySet())
+            def = def - ((BasePart) ItemManager.getById(entry.getKey())).getCostSlot() * entry.getIntValue();
         return def;
     }
 
@@ -171,7 +171,7 @@ public class CommonData implements ItemData, LevelAndPartData {
 
     @Override
     public int removePart(String id) {//todo
-        return parts.remove(id);
+        return parts.removeInt(id);
     }
 
     /**
@@ -183,7 +183,7 @@ public class CommonData implements ItemData, LevelAndPartData {
     }
 
     @Override
-    public String toJsonString() {
+    public String toString() {
         StringBuilder sb = new StringBuilder("{\"exp\":" + exp + ",\"level\":" + level + ",\"parts\":{");
         parts.forEach((s, integer) -> sb.append("\"").append(s).append("\":").append(integer));
         return sb.append("}}").toString();

@@ -4,6 +4,8 @@ import me.enderlight3336.ancientcraft.AncientCraft;
 import me.enderlight3336.ancientcraft.item.data.ItemData;
 import me.enderlight3336.ancientcraft.item.instance.ItemInstance;
 import me.enderlight3336.ancientcraft.item.instance.hoe.BaseHoe;
+import me.enderlight3336.ancientcraft.item.instance.misc.ClimberHook;
+import me.enderlight3336.ancientcraft.item.instance.misc.MelonKnife;
 import me.enderlight3336.ancientcraft.item.instance.part.PartFarmhand;
 import me.enderlight3336.ancientcraft.item.instance.part.PartSuckBlood;
 import me.enderlight3336.ancientcraft.item.instance.part.base.AttributePart;
@@ -12,11 +14,12 @@ import me.enderlight3336.ancientcraft.item.instance.sword.DragonSword;
 import me.enderlight3336.ancientcraft.item.instance.sword.HeavySword;
 import me.enderlight3336.ancientcraft.item.instance.sword.LongSword;
 import me.enderlight3336.ancientcraft.item.instance.type.ItemDatable;
-import me.enderlight3336.ancientcraft.util.*;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
+import me.enderlight3336.ancientcraft.util.AsyncDataSaver;
+import me.enderlight3336.ancientcraft.util.FileUtil;
+import me.enderlight3336.ancientcraft.util.ItemUtil;
+import me.enderlight3336.ancientcraft.util.KeyManager;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -59,7 +62,7 @@ public final class ItemManager {
     @Nullable
     public static ItemInstance getItemInstance(ItemStack item) {
         if (item.hasItemMeta())
-            return registeredItem.get(ItemUtil.getId(item.getItemMeta()));
+            return registeredItem.get(item.getItemMeta().getPersistentDataContainer().get(KeyManager.getIdKey(), PersistentDataType.STRING));
         return null;
     }
 
@@ -83,7 +86,8 @@ public final class ItemManager {
         new ItemInstance(FileUtil.getJSON("/meta/ItemRefinedGold.json"));
         new ItemInstance(FileUtil.getJSON("/meta/ItemRefinedIron.json"));
         new ItemInstance(FileUtil.getJSON("/meta/ItemSpicyStrip.json"));
-        new ItemInstance(FileUtil.getJSON("/meta/ItemClimberHook.json"));
+        new ClimberHook(FileUtil.getJSON("/meta/ItemClimberHook.json"));
+        new MelonKnife(FileUtil.getJSON("/meta/ItemMelonKnife.json"));
         //part must load before other items
         //Because dataItem may try to find some part's instance
         new PartSuckBlood(FileUtil.getJSON("/meta/PartAbSuckBlood.json"));

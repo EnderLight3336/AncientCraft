@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public final class AsyncDataSaver extends BukkitRunnable {
-    private static Map<String, List<Entry>> map = new HashMap<>();
+    private static Map<String, List<Entry>> itemDataMap = new HashMap<>();
 
     @Override
     public void run() {
@@ -21,23 +21,23 @@ public final class AsyncDataSaver extends BukkitRunnable {
     }
 
     public static void put(String id, int index, ItemData data) {
-        map.computeIfAbsent(id, k -> new ArrayList<>()).add(new Entry(index, data));
+        itemDataMap.computeIfAbsent(id, k -> new ArrayList<>()).add(new Entry(index, data));
     }
 
-    public static void pub(String id, Entry entry) {
-        map.computeIfAbsent(id, k -> new ArrayList<>()).add(entry);
+    public static void putItemData(String id, Entry entry) {
+        itemDataMap.computeIfAbsent(id, k -> new ArrayList<>()).add(entry);
     }
 
     public static void execute() {
-        if (map.size() == 0)
+        if (itemDataMap.size() == 0)
             return;
-        Map<String, List<Entry>> todo = map;
-        map = new HashMap<>();
+        Map<String, List<Entry>> todo = itemDataMap;
+        itemDataMap = new HashMap<>();
         todo.forEach((str, list) -> {
-            File root = FileUtil.getDataFolder(str);
+            File root = FileUtil.getItemDataFolder(str);
             list.forEach(entry -> {
                 try (FileWriter fw = new FileWriter(new File(root, String.valueOf(entry.index)))) {
-                    fw.write(entry.data.toJsonString());
+                    fw.write(entry.data.toString());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -1,12 +1,11 @@
 package me.enderlight3336.ancientcraft.inventory;
 
-public final class InventoryUtil {/**
- private static final NamespacedKey actionId =
- new NamespacedKey(AncientCraft.getInstance(), "ac_invact");
- public static void setId(byte id, ItemMeta im) {
- im.getPersistentDataContainer().set(actionId, PersistentDataType.BYTE, id);
- }
- public static byte getId(ItemStack meta) {
- return meta.getItemMeta().getPersistentDataContainer.get(actionId, PersistentDataType.BYTE);
- }*/
+import me.enderlight3336.ancientcraft.AncientCraft;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
+
+public final class InventoryUtil {
 }

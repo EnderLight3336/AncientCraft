@@ -1,29 +1,29 @@
 package me.enderlight3336.ancientcraft.listener;
 
+import me.enderlight3336.ancientcraft.inventory.ACInventoryHolder;
+import me.enderlight3336.ancientcraft.inventory.StoreItemable;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 
-public final class InventoryListener implements Listener {/**
- @EventHandler(ignoreCancelled = true)
- public void onClose(InventoryCloseEvent event) {
- if(event.getView().getTopInventory().getHolder() instanceof ACInventoryHolder) {
- ((ACInventoryHolder) event.getView().getTopInventory().getHolder()).returnAllItem(event.getViewers().get(0));
- }
- }
- @EventHandler(ignoreCancelled = true)
- public void onClick(InventoryClickEvent event) {
- if(event.getView().getTopInventory().getHolder() instanceof ACInventoryHolder) {
- if() {
- ((Player) event.getViewers().get(0)).updateInventory();
- }
- if (event.getCurrentItem() != null) {}
- }
- }
- @EventHandler(ignoreCancelled = true)
- public void onDrag(InventoryDragEvent event) {
+public final class InventoryListener implements Listener {
+    @EventHandler(ignoreCancelled = true)
+    public void onClose(InventoryCloseEvent event) {
+        if (event.getView().getTopInventory().getHolder() instanceof StoreItemable holder) {
+            holder.returnAllItem((Player) event.getPlayer());
+        }
+    }
 
- ((Player) event.getViewers().get(0)).updateInventory();
- }
- public void handle(@NotNull ItemStack meta, ACInventoryHolder holder) {
+    @EventHandler(ignoreCancelled = true)
+    public void onClick(InventoryClickEvent event) {
+        if (event.getView().getTopInventory().getHolder() instanceof ACInventoryHolder holder)
+            event.setCancelled(holder.click(event.getSlot(), event));
+    }
 
- }*/
+    @EventHandler(ignoreCancelled = true)
+    public void onDrag(InventoryDragEvent event) {
+    }
 }

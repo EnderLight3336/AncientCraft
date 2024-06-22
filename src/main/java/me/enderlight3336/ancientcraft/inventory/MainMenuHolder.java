@@ -1,6 +1,6 @@
 package me.enderlight3336.ancientcraft.inventory;
 
-public final class MainMenuHolder extends ACInventoryHolder {/**
+public final class MainMenuHolder  {/**
  public MainMenuHolder() {
  super();
  }

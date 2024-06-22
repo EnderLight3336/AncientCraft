@@ -1,11 +1,8 @@
 package me.enderlight3336.ancientcraft.inventory;
 
-public class ACInventoryHolder {/**
- public ACInventoryHolder() {}
- @Override public Inventory getInventory() {
- return InventoryInstance.getNoMean();
- }
- public boolean click(int target) {
- return false;
- }*/
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.InventoryHolder;
+
+public interface ACInventoryHolder extends InventoryHolder {
+    boolean click(int slot, InventoryClickEvent event);
 }

@@ -2,6 +2,8 @@ package me.enderlight3336.ancientcraft;
 
 import me.enderlight3336.ancientcraft.command.CommandManager;
 import me.enderlight3336.ancientcraft.item.ItemManager;
+import me.enderlight3336.ancientcraft.item.instance.ItemInstance;
+import me.enderlight3336.ancientcraft.item.instance.type.ItemDatable;
 import me.enderlight3336.ancientcraft.listener.DummyListener;
 import me.enderlight3336.ancientcraft.listener.EntityListener;
 import me.enderlight3336.ancientcraft.listener.ItemProtectListener;
@@ -18,6 +20,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -171,8 +174,11 @@ public final class AncientCraft extends JavaPlugin {
                     if (!CommandManager.requirePlayer(sender)) {
                         break;
                     }
-                    String id = ItemUtil.getId(((Player) sender).getInventory().getItemInMainHand().getItemMeta());
-                    sender.sendMessage(id == null ? "你手持的不是AncientCraft的物品 !" : "id: " + id);
+                    ItemStack item = ((Player) sender).getInventory().getItemInMainHand();
+                    ItemInstance instance1 = ItemManager.getItemInstance(item);
+                    sender.sendMessage(instance1 == null ? "你手持的不是AncientCraft的物品 !" : "id: " + instance1.getId());
+                    if (instance1 instanceof ItemDatable<?>)
+                        sender.sendMessage(((ItemDatable<?>) instance1).getData(item).toString());
                 }
                 case "reload" -> {
                     reload = true;

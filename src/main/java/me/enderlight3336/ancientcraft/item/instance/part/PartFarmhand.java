@@ -17,6 +17,7 @@ import java.util.UUID;
 public final class PartFarmhand extends AbilityPart {
     private final Map<String, PartEventAcceptor<?>> handlers = Map.of(BlockBreakEvent.class.getSimpleName(), new PartEventAcceptor<BlockBreakEvent>() {
         private static final Map<UUID, Location> map = new HashMap<>();
+
         @Override
         public void execute(BlockBreakEvent event, int partLevel) {
             Block block = event.getBlock();
@@ -34,6 +35,7 @@ public final class PartFarmhand extends AbilityPart {
                 handle(block, player, BlockFace.SOUTH_WEST);
             }
         }
+
         private static void handle(Block block, Player player, BlockFace face) {
             if (block.getRelative(face).getBlockData() instanceof Ageable age &&
                     age.getAge() == age.getMaximumAge()) {
@@ -48,6 +50,7 @@ public final class PartFarmhand extends AbilityPart {
             return id;
         }
     });
+
     public PartFarmhand(JSONObject object) {
         super(object);
     }
@@ -61,7 +64,8 @@ public final class PartFarmhand extends AbilityPart {
     public boolean isMaxLevel(int partLevel) {
         return partLevel == 1;
     }
-    public static final class SpecialBlockBreakEvent extends BlockBreakEvent{
+
+    public static final class SpecialBlockBreakEvent extends BlockBreakEvent {
         public SpecialBlockBreakEvent(@NotNull Block theBlock, @NotNull Player player) {
             super(theBlock, player);
         }

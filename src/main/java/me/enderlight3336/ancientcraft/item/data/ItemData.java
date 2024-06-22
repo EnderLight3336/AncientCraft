@@ -16,9 +16,10 @@ import java.util.function.Consumer;
  * Because method modifyItemData will save your change
  */
 public interface ItemData {
-    String toJsonString();
 
     List<String> buildLore();
 
     List<String> rebuildLore(List<String> origin);
+
+    String toString();
 }

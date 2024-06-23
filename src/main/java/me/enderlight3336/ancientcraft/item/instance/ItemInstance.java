@@ -54,7 +54,7 @@ public class ItemInstance {
 
         originItem = new ItemStack(this.material);
         ItemMeta im = originItem.getItemMeta();
-        im.setDisplayName(this.name);
+        im.setItemName(this.name);
         im.getPersistentDataContainer().set(KeyManager.getIdKey(), PersistentDataType.STRING, id);
         im.setLore(this.lore);
 

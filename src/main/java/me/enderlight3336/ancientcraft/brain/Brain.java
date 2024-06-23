@@ -14,13 +14,22 @@ import java.io.File;
 import java.util.UUID;
 
 public final class Brain extends ACInventoryHolderImpl {
-    public static final ItemStack BRAIN_ITEM = ItemUtil.createHead("");
+    public static final IDyncmicItemFactory BRAIN_ITEM = new IDyncmicItemFactory() {
+        ItemStack item1 = ItemUtil.createHead("", "", "");
+        public ItemStack get(int i) {
+            return switch(i) {
+                case 1 -> item1
+                default -> null
+            };
+        }
+    };
     public static final ItemStack SACK_ITEM = ItemUtil.createHead("");
+    public static final ItemStack QUIVER_ITEM = ItemUtil.createHead()
     private int level;
     private final Sack sack;
 
     public Brain(UUID uuid) {
-        super(54, new int[]{13, 37}, event -> {
+        super(54, new int[]{12, 37}, event -> {
             event.getWhoClicked().getInventory().getStorageContents();
             return false;
         }, event -> {
@@ -31,8 +40,6 @@ public final class Brain extends ACInventoryHolderImpl {
             return false;
         });
 
-        inventory.setItem(13, BRAIN_ITEM);
-        inventory.setItem(37, SACK_ITEM);
         File brainFile = new File(FileUtil.PLAYER_DATA_FOLDER, uuid.toString());
         File sackFile = new File(FileUtil.SACK_DATA_FOLDER, uuid.toString());
         if (brainFile.exists()) {
@@ -42,13 +49,16 @@ public final class Brain extends ACInventoryHolderImpl {
             level = 0;
         }
         this.sack = sackFile.exists() ? new Sack(FileUtil.getJSONByFile(sackFile)) : new Sack();
+        inventory.setItem(37, SACK_ITEM);
+        inventory.setItem(12, BRAIN_ITEM.get(level));
     }
 
     public int getLevel() {
         return this.level;
     }
     public void levelUp() {
-        this.level++;
+        inventory.setItem(12, BRAIN_ITEM.get(
+            ++this.level));
     }
 
     public Sack getSack() {

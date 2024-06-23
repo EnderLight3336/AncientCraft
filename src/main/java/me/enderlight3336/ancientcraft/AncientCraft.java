@@ -103,7 +103,7 @@ public final class AncientCraft extends JavaPlugin {
         if (args.length > 0) {
             switch (args[0].toLowerCase()) {
                 case "version" ->
-                        sender.sendMessage("================AncientCraft================", "    version: " + AncientCraft.getVersion());
+                    sender.sendMessage("================AncientCraft================", "    version: " + AncientCraft.getVersion());
                 case "give" -> {
                     if (sender instanceof Player) {
                         if (args.length == 1) {
@@ -179,6 +179,10 @@ public final class AncientCraft extends JavaPlugin {
                     sender.sendMessage(instance1 == null ? "你手持的不是AncientCraft的物品 !" : "id: " + instance1.getId());
                     if (instance1 instanceof ItemDatable<?>)
                         sender.sendMessage(((ItemDatable<?>) instance1).getData(item).toString());
+                }
+                case "brain" -> if (CommandUtil.requirePlayer(sender)) {
+                        ((Player) sender).openInventory(BrainManager.getBrain(((Player) sender).getUniqueId()).getInventory());
+                    }
                 }
                 case "reload" -> {
                     reload = true;

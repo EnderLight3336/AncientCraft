@@ -17,7 +17,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.UUID;
 
-public final class ItemUtil {
+lpublic final class ItemUtil {
     public static double handleAttribute(Attribute attribute, Material material, double base) {
         switch (attribute) {
             case GENERIC_ARMOR -> {
@@ -106,9 +106,11 @@ public final class ItemUtil {
         Integer i = item.getItemMeta().getPersistentDataContainer().get(KeyManager.getDataIdKey(), PersistentDataType.INTEGER);
         return i != null ? i : -1;
     }
-    public static ItemStack createHead(String base64) {
+    public static ItemStack createHead(String base64, String name, String... lore) {
         ItemStack item = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta im = (SkullMeta) item.getItemMeta();
+        im.setItemName(name);
+        im.setLore(List.of(lore));
         PlayerProfile profile = Bukkit.createPlayerProfile(ItemInstance.HEAD_UUID);
         PlayerTextures textures = profile.getTextures();
         try {
@@ -117,6 +119,20 @@ public final class ItemUtil {
             throw new RuntimeException(e);
         }
         im.setOwnerProfile(profile);
+        return item;
+    }
+    public static ItemStack createItem(Material material, String name, boolean enchanted, String... lore) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta im = item.getItemMeta();
+        im.setItemName(name);
+        im.setLore(List.of(lore));
+        im.setEnchantmentGlintOverride(enchanted);
+        item.setItemMeta(im);
+        return item;
+    }
+    public static ItemStack createItem(Material material, Function<ItemMeta, ItemMeta> func) {
+        ItemStack item = new ItemStack(Material);
+        item.setItemMeta(func.apply(item.getItemMeta));
         return item;
     }
 }

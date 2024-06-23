@@ -1,10 +1,12 @@
 package me.enderlight3336.ancientcraft.util;
 
+import com.google.common.base.Optional;
 import me.enderlight3336.ancientcraft.item.instance.ItemInstance;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.persistence.PersistentDataType;
@@ -15,9 +17,11 @@ import org.jetbrains.annotations.NotNull;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 
-lpublic final class ItemUtil {
+public final class ItemUtil {
     public static double handleAttribute(Attribute attribute, Material material, double base) {
         switch (attribute) {
             case GENERIC_ARMOR -> {
@@ -131,8 +135,8 @@ lpublic final class ItemUtil {
         return item;
     }
     public static ItemStack createItem(Material material, Function<ItemMeta, ItemMeta> func) {
-        ItemStack item = new ItemStack(Material);
-        item.setItemMeta(func.apply(item.getItemMeta));
+        ItemStack item = new ItemStack(material);
+        item.setItemMeta(func.apply(item.getItemMeta()));
         return item;
     }
 }

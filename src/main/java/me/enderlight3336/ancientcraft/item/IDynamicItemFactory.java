@@ -1,5 +1,7 @@
 package me.enderlight3336.ancientcraft.item;
 
-public interface IDyncmicItemFactory{
+import org.bukkit.inventory.ItemStack;
+
+public interface IDynamicItemFactory {
     ItemStack get(int i);
 }
